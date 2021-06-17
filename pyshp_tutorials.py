@@ -63,6 +63,7 @@ from osgeo import ogr, osr
 # print(f'変換後の座標系{dst_srs.GetName()}')
 # # 変換式を作成（参考https://gdal.org/python/osgeo.osr.CoordinateTransformation-class.html）
 # trans = osr.CoordinateTransformation(src_srs, dst_srs)
+# shp.Destroy()  # shapefileを閉じる
 
 # # 取得した座標系を基に座標変換（pyshpライブラリで読み込んだデータにosgeoライブラリで作成した変換式適用）
 # for shp in shps_farm:
@@ -89,64 +90,83 @@ from osgeo import ogr, osr
 #     print(f'変換後ポリゴン位置{points_transfer}')  # 位置情報（座標変換後）
 
 
+# # %% ポイントデータ操作1: ポイントデータ変換（shapelyライブラリ使用）
+# for shp in shps_dam:
+#     points = Point(shp.points[0])
+#     #print(f'経度{points.x}, 緯度{points.y}')  # 位置情報
 
-# %% ポイントデータ操作1: ポイントデータ変換（shapelyライブラリ使用）
-for shp in shps_dam:
-    points = Point(shp.points[0])
-    #print(f'経度{points.x}, 緯度{points.y}')  # 位置情報
+# # %% ポイントデータ操作2: ポイント間の距離を測定（shapelyライブラリ使用）
+# point1 = Point(0, 0)
+# point2 = Point(1, 1)
+# dist = point1.distance(point2)
+# print(f'距離={dist}')
 
-# %% ポイントデータ操作2: ポイント間の距離を測定（shapelyライブラリ使用）
-point1 = Point(0, 0)
-point2 = Point(1, 1)
-dist = point1.distance(point2)
-print(f'距離={dist}')
+# # %% ポイントデータ操作3: 緯度経度からポイント間の距離を測定（pyprojで平面座標に変換＋shapelyライブラリ使用）
+# # 県庁所在地の座標を読込
+# df_prefecture = pd.read_csv('./prefecture_location.csv', encoding='cp932')
+# # 緯度経度の分秒を小数に変換
 
-# %% ポイントデータ操作3: 緯度経度からポイント間の距離を測定（pyproj.Geod使用https://ikatakos.com/pot/programming/python/packages/pyproj）
-import pyproj
-# 県庁所在地の座標を読込
-df_prefecture = pd.read_csv('./prefecture_location.csv', encoding='cp932')
-df_prefecture['longitude'] = df_prefecture['都道府県庁 経度'].apply(lambda x: float(x.split('°')[0])
-                                                                   + float(x.split('°')[1].split("'")[0]) / 60
-                                                                   + float(x.split("'")[1].split('"')[0]) / 3600)
-df_prefecture['latitude'] = df_prefecture['都道府県庁 緯度'].apply(lambda x: float(x.split('°')[0])
-                                                                  + float(x.split('°')[1].split("'")[0]) / 60
-                                                                  + float(x.split("'")[1].split('"')[0]) / 3600)
-# 県庁所在地の緯度経度をDictionary化
-dict_pref_office = {row['都道府県']: (row['longitude'], row['latitude']) for i, row in df_prefecture.iterrows()}
-# 距離測定用のGRS80楕円体
-grs80 = pyproj.Geod(ellps='GRS80')
+# df_prefecture['longitude'] = df_prefecture['都道府県庁 経度'].apply(lambda x: float(x.split('°')[0])
+#                                                                    + float(x.split('°')[1].split("'")[0]) / 60
+#                                                                    + float(x.split("'")[1].split('"')[0]) / 3600)
+# df_prefecture['latitude'] = df_prefecture['都道府県庁 緯度'].apply(lambda x: float(x.split('°')[0])
+#                                                                   + float(x.split('°')[1].split("'")[0]) / 60
+#                                                                   + float(x.split("'")[1].split('"')[0]) / 3600)
+# # 県庁所在地の緯度経度をDictionary化
+# dict_pref_office = {row['都道府県']: (row['longitude'], row['latitude']) for i, row in df_prefecture.iterrows()}
+
+# # UTM座標（ゾーン54=EPSG3100）への座標変換式を作成
+# from pyproj import Transformer
+# transformer = Transformer.from_crs('EPSG:4612', 'EPSG:3100')
+
+# # ダムデータを1点ずつ走査
+# for shp, rec in zip(shps_dam, recs_dam):
+#     # ダムの位置（平面直角座標に変換）
+#     dam_point = transformer.transform(shp.points[0][1], shp.points[0][0])
+#     # 都道府県名を所在地から正規表現で抜き出して位置変換
+#     prefecture = re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group()
+#     pref_office_point = dict_pref_office[prefecture]  # 県庁所在地の緯度経度
+#     pref_office_point = transformer.transform(pref_office_point[1], pref_office_point[0])
+#     # ポイントデータとして格納（shapelyライブラリ使用）
+#     dam_point = Point(dam_point)
+#     pref_office_point = Point(pref_office_point)
+#     # 距離を計算（shapelyライブラリ使用）
+#     dist = dam_point.distance(pref_office_point)
+#     print(f'{rec["W01_001"]}ダム {prefecture}庁まで{dist/1000}km')
+
+# # %% ポイントデータ操作3: 緯度経度からポイント間の距離を測定（pyproj.Geod使用https://ikatakos.com/pot/programming/python/packages/pyproj）
+# import pyproj
+# # 距離測定用のGRS80楕円体
+# grs80 = pyproj.Geod(ellps='GRS80')
+
+# # ダムデータを1点ずつ走査
+# for shp, rec in zip(shps_dam, recs_dam):
+#     # ダムの位置（緯度経度）
+#     dam_point = shp.points[0]
+#     # 都道府県名を所在地から正規表現で抜き出し
+#     prefecture = re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group()
+#     pref_office_point = dict_pref_office[prefecture]  # 県庁所在地の緯度経度
+#     # 距離を計算（pyproj.Geod使用）
+#     azimuth, bkw_azimuth, dist = grs80.inv(dam_point[0], dam_point[1], pref_office_point[0], pref_office_point[1])
+#     print(f'{rec["W01_001"]}ダム {prefecture}庁まで{dist/1000}km')
+
+# %% ポイントデータ操作4: 最も近い点を探す（自身）
+from sklearn.neighbors import NearestNeighbors
+# UTM座標（ゾーン53=EPSG3099）への座標変換式を作成
+src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
+src_srs.ImportFromEPSG(4612)
+dst_srs.ImportFromEPSG(3099)
+trans = osr.CoordinateTransformation(src_srs, dst_srs)
+
+# 距離関係を学習
+dam_points_utm = [trans.TransformPoint(shp.points[0][1], shp.points[0][1])[:2] for shp in shps_dam] # UTM座標に変換
+dam_points_array = np.array(dam_points_utm)  # ndarray化
+nn = NearestNeighbors(algorithm='ball_tree')
+nn.fit(dam_points_array)
 
 # ダムデータを1点ずつ走査
 for shp, rec in zip(shps_dam, recs_dam):
-    # ダムの位置（緯度経度）
-    dam_point = shp.points[0]
-    # 都道府県名を所在地から正規表現で抜き出し
-    prefecture = re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group()
-    pref_office_point = dict_pref_office[prefecture]  # 県庁所在地の緯度経度
-    # 距離を計算（pyproj.Geod使用）
-    azimuth, bkw_azimuth, dist = grs80.inv(dam_point[0], dam_point[1], pref_office_point[0], pref_office_point[1])
-    print(f'{rec["W01_001"]}ダム {prefecture}庁まで{dist/1000}km')
-
-# %% ポイントデータ操作3: 緯度経度からポイント間の距離を測定（pyprojで平面座標に変換＋shapelyライブラリ使用）
-### 省略 ###
-# 平面直角座標（10系=EPSG2452）への座標変換式を作成
-from pyproj import Transformer
-transformer = Transformer.from_crs('EPSG:4612', 'EPSG:2452')
-
-# ダムデータを1点ずつ走査
-for shp, rec in zip(shps_dam, recs_dam):
-    # ダムの位置（平面直角座標に変換）
-    dam_point = transformer.transform(shp.points[0][1], shp.points[0][0])
-    # 都道府県名を所在地から正規表現で抜き出して位置変換
-    prefecture = re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group()
-    pref_office_point = dict_pref_office[prefecture]  # 県庁所在地の緯度経度
-    pref_office_point = transformer.transform(pref_office_point[1], pref_office_point[0])
-    # ポイントデータとして格納（shapelyライブラリ使用）
-    dam_point = Point(dam_point)
-    pref_office_point = Point(pref_office_point)
-    # 距離を計算（shapelyライブラリ使用）
-    dist = dam_point.distance(pref_office_point)
-    print(f'{rec["W01_001"]}ダム {prefecture}庁まで{dist/1000}km')
+    print('')
 
 # %% ポイントデータの処理（1点ずつ処理）
 # shpファイル読込（pyshpライブラリ使用）

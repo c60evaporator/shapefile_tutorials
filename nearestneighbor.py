@@ -16,7 +16,7 @@ xq[:, 0] += np.arange(nq) / 1000.
 # %% sklearn
 from sklearn.neighbors import NearestNeighbors
 
-nn = NearestNeighbors(metric='cosine')
+nn = NearestNeighbors(algorithm='ball_tree')
 nn.fit(xb)
 dists, result = nn.kneighbors(xq, n_neighbors=5)
 print (result)
