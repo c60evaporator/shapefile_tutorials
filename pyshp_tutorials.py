@@ -150,7 +150,7 @@ from osgeo import ogr, osr
 #     azimuth, bkw_azimuth, dist = grs80.inv(dam_point[0], dam_point[1], pref_office_point[0], pref_office_point[1])
 #     print(f'{rec["W01_001"]}ダム {prefecture}庁まで{dist/1000}km')
 
-# %% ポイントデータ操作4: 最も近い点を探す（自身）
+# %% ポイントデータ操作4: 最も近い点を探す
 from sklearn.neighbors import NearestNeighbors
 # UTM座標（ゾーン53=EPSG3099）への座標変換式を作成
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
@@ -158,26 +158,23 @@ src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
 trans = osr.CoordinateTransformation(src_srs, dst_srs)
 
-# 距離関係を学習
-dam_points_utm = [trans.TransformPoint(shp.points[0][1], shp.points[0][1])[:2] for shp in shps_dam] # UTM座標に変換
+# 全点の位置関係を学習
+dam_points_utm = [trans.TransformPoint(shp.points[0][1], shp.points[0][0])[:2] for shp in shps_dam] # UTM座標に変換
 dam_points_array = np.array(dam_points_utm)  # ndarray化
 nn = NearestNeighbors(algorithm='ball_tree')
 nn.fit(dam_points_array)
 
 # ダムデータを1点ずつ走査
 for shp, rec in zip(shps_dam, recs_dam):
-    print('')
+    # 最近傍点を探索
+    point_utm = trans.TransformPoint(shp.points[0][1], shp.points[0][0])[:2]  # UTM座標に変換
+    point_utm = np.array([list(point_utm)])  # ndarrayに変換
+    dists, result = nn.kneighbors(point_utm, n_neighbors=3)  # 近傍上位3点を探索
+    # 見付かった最近傍点(1番目は自身なので、2番目に近い点が最近傍点)を表示
+    rec_nearest = recs_dam[result[0][1]]  # 最近傍点の属性データ取得
+    dist_nearest = dists[0][1]/1000  # 最近傍点までの距離(m単位なのでkm単位に変換ん)
+    print(f'{rec["W01_001"]}ダムから最も近いダム: {rec_nearest["W01_001"]}ダム  距離={dist_nearest}km')
 
-# %% ポイントデータの処理（1点ずつ処理）
-# shpファイル読込（pyshpライブラリ使用）
-src = shapefile.Reader(DAM_PATH, encoding='cp932')
-shps = src.shapes()
-recs = src.records()
-# 1点ずつ走査して処理
-for shp in shps:
-    # ポイントデータとして格納（shapelyライブラリ使用）
-    points = shp
-    # 
 
 # %% ポイントデータの処理（一括）
 # shpファイル読込（pyshpライブラリ使用）
