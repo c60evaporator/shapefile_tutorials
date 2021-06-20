@@ -369,6 +369,84 @@ areas = [Polygon(points_hole[0], points_hole[1:]).area/1000000 for points_hole i
 biggest_index = np.argmax(areas)
 print(f'面積最大の湖={recs_lake[biggest_index]["W09_001"]}  面積={areas[biggest_index]}km2')
 
+# %% 出力1：ポイントデータ出力
+# 出力用のデータ（堤高さ100m以上のダム）作成
+# 堤高100m以上のインデックス取得
+over100m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 100]
+# 堤高100m以上のジオメトリと属性取得
+over100m_shps = [shp for i, shp in enumerate(shps_dam) if i in over100m_indices]
+over100m_recs = [rec for i, rec in enumerate(recs_dam) if i in over100m_indices]
 
+# Shapefileを出力
+outpath = './dams_over100m/dams_over100m.shp'
+with shapefile.Writer(outpath, encoding='cp932') as w:
+    # 属性のフィールドを定義（名前、型、サイズ、精度を入力）
+    w.field('ダム名', 'C', 50, 0)
+    w.field('堤高', 'F', 12, 6)
+    w.field('総貯水量', 'F', 12, 6)
+    # ジオメトリと属性値を行ごとに追加
+    for shp, rec in zip(over100m_shps, over100m_recs):
+        # ジオメトリ（ポイント）を追加
+        w.point(shp.points[0][0], shp.points[0][1])
+        # 属性値を追加
+        attr = (f'{rec["W01_001"]}ダム', rec["W01_007"], rec["W01_010"])
+        w.record(*attr)
+
+# %% 出力2：ラインデータ出力
+# 出力用のデータ（上位5位の河川に絞る）作成
+# 名称不明と琵琶湖以外のインデックス取得
+river_top5_indices = [i for i, rec in enumerate(recs_river) if rec["W05_004"] in ['野洲川', '安曇川', '愛知川', '日野川', '高時川']]
+# 名称不明と琵琶湖以外のジオメトリと属性取得
+river_top5_shps = [shp for i, shp in enumerate(shps_river) if i in river_top5_indices]
+river_top5_recs = [rec for i, rec in enumerate(recs_river) if i in river_top5_indices]
+
+# Shapefileを出力
+outpath = './river_top5/river_top5.shp'
+with shapefile.Writer(outpath, encoding='cp932') as w:
+    # 属性のフィールドを定義（名前、型、サイズ、精度を入力）
+    w.field('河川名', 'C', 50, 0)
+    w.field('河川コード', 'C', 50, 0)
+    # ジオメトリと属性値を行ごとに追加
+    for shp, rec in zip(river_top5_shps, river_top5_recs):
+        # ジオメトリ（ライン）を追加
+        w.line([shp.points])
+        # 属性値を追加
+        attr = (f'{rec["W05_004"]}', f'{rec["W05_002"]}')
+        w.record(*attr)
+
+# %% 出力3：ポリゴンデータ出力
+# 出力用のデータ（面積100km2以上の湖沼に絞る）作成
+# UTM座標変換
+src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
+src_srs.ImportFromEPSG(4612)
+dst_srs.ImportFromEPSG(3099)
+trans = osr.CoordinateTransformation(src_srs, dst_srs)
+polys_utm = [list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points)) for shp in shps_lake]
+# shp.partsに基づきポリゴン点を一括分割
+parts_list = [[i for i in shp.parts] + [len(shp.points) - 1] for shp in shps_lake]
+points_hole_list = [[poly[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)] for poly, parts in zip(polys_utm, parts_list)]
+# 面積100km2以上のインデックス取得
+lake_over100km2_indices = [i for i, points_hole in enumerate(points_hole_list) if Polygon(points_hole[0], points_hole[1:]).area/1000000 > 100]
+# 面積100km2以上のジオメトリと属性取得
+lake_over100km2_shps = [shp for i, shp in enumerate(shps_lake) if i in lake_over100km2_indices]
+lake_over100km2_recs = [rec for i, rec in enumerate(recs_lake) if i in lake_over100km2_indices]
+
+# Shapefileを出力
+outpath = './lake_over100km2/lake_over100km2.shp'
+with shapefile.Writer(outpath, encoding='cp932') as w:
+    # 属性のフィールドを定義（名前、型、サイズ、精度を入力）
+    w.field('湖沼名', 'C', 50, 0)
+    w.field('面積', 'F', 12, 6)
+    # ジオメトリと属性値を行ごとに追加
+    for shp, rec in zip(lake_over100km2_shps, lake_over100km2_recs):
+        # shp.partsに基づきポリゴン点を分割（穴を定義）
+        parts = [i for i in shp.parts] + [len(shp.points) - 1]
+        points_hole = [shp.points[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)]
+        # ジオメトリ（ポリゴン）を追加
+        w.poly(points_hole)
+        # 属性値を追加
+        area = Polygon(list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points))).area/1000000  # 面積計算
+        attr = (f'{rec["W09_001"]}', f'{area}')
+        w.record(*attr)
 
 # %%
