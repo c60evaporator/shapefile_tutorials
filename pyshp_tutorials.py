@@ -1,5 +1,5 @@
 ###### pyshpで読込＆shapelyとosgeoで各種操作 ######
-# %%
+# %% シェープファイルの読込
 import shapefile
 from shapely.geometry import Point, LineString, Polygon
 from osgeo import ogr, osr
@@ -148,7 +148,7 @@ for shp, rec in zip(shps_dam, recs_dam):
     dist = dam_point.distance(pref_office_point)
     print(f'{rec["W01_001"]}ダム {prefecture}庁まで{dist/1000}km')
 
-# # %% ポイントデータ操作3: 緯度経度からポイント間の距離を測定（pyproj.Geod使用https://ikatakos.com/pot/programming/python/packages/pyproj）
+# %% ポイントデータ操作3: 緯度経度からポイント間の距離を測定（pyproj.Geod使用https://ikatakos.com/pot/programming/python/packages/pyproj）
 # 距離測定用のGRS80楕円体
 grs80 = pyproj.Geod(ellps='GRS80')
 
@@ -277,14 +277,21 @@ print(df_length.head(5))
 
 # %% ポリゴンデータ操作1: ポリゴンデータ変換（shapelyライブラリ使用）
 for shp, rec in zip(shps_lake, recs_lake):
-    poly = Polygon(shp.points)
+    # shp.partsに基づきポリゴン点を分割（穴を定義）
+    parts = [i for i in shp.parts] + [len(shp.points) - 1]
+    points_hole = [shp.points[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)]
+    # ポリゴンを作成
+    poly = Polygon(points_hole[0], points_hole[1:])
     print(f'{rec["W09_001"]} {list(poly.exterior.coords)}')  # 位置情報を表示
 
 # %% ポリゴンデータ操作2: 重心位置を取得（shapelyライブラリ使用、緯度経度座標のまま計算）
 # 湖沼データを1点ずつ走査
 for shp, rec in zip(shps_lake, recs_lake):
+    # shp.partsに基づきポリゴン点を分割（穴を定義）
+    parts = [i for i in shp.parts] + [len(shp.points) - 1]
+    points_hole = [shp.points[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)]
     # ポリゴンデータに変換
-    poly = Polygon(shp.points)
+    poly = Polygon(points_hole[0], points_hole[1:])
     # 重心を算出
     center = list(poly.centroid.coords)[0]
     print(f'{rec["W09_001"]}  重心={center}')
@@ -301,8 +308,11 @@ trans_reverse = osr.CoordinateTransformation(dst_srs, src_srs)  # UTM座標→�
 for shp, rec in zip(shps_lake, recs_lake):
     # UTM座標に変換
     lake_utm = list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points))
+    # shp.partsに基づきポリゴン点を分割（穴を定義）
+    parts = [i for i in shp.parts] + [len(lake_utm) - 1]
+    points_hole = [lake_utm[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)]
     # ポリゴンデータに変換
-    poly = Polygon(lake_utm)
+    poly = Polygon(points_hole[0], points_hole[1:])
     # 重心を算出
     center_utm = list(poly.centroid.coords)[0]
     # 緯度経度座標に戻す（TransformPointは緯度→経度の順で返すので、元の座標系に合わせ経度を先に反転させる）
@@ -310,14 +320,19 @@ for shp, rec in zip(shps_lake, recs_lake):
     print(f'{rec["W09_001"]}  重心={center}')
 
     # 座標変換しなかった場合の重心との距離を計算
-    center_not_trans = list(Polygon(shp.points).centroid.coords)[0]
+    parts_not_trans = [i for i in shp.parts] + [len(shp.points) - 1]
+    points_hole_not_trans = [shp.points[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)]
+    center_not_trans = list(Polygon(points_hole_not_trans[0], points_hole_not_trans[1:]).centroid.coords)[0]
     grs80 = pyproj.Geod(ellps='GRS80')
     dist = grs80.inv(center[0], center[1], center_not_trans[0], center_not_trans[1])[2]
     print(f'{rec["W09_001"]}  座標変換なしとの差={dist}m')
 
 # %% ポリゴンデータ操作2: 重心位置を一括取得（shapelyライブラリ使用）
+# shp.partsに基づきポリゴン点を一括分割
+parts_list = [[i for i in shp.parts] + [len(shp.points) - 1] for shp in shps_lake]
+points_hole_list = [[shp.points[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)] for shp, parts in zip(shps_lake, parts_list)]
 # 重心位置を一括計算
-centers = [tuple(list(Polygon(shp.points).centroid.coords)[0]) for shp in shps_lake]
+centers = [tuple(list(Polygon(points_hole[0], points_hole[1:]).centroid.coords)[0]) for points_hole in points_hole_list]
 # 重心が最も北にある湖を表示
 northest_index = np.argmax([center[1] for center in centers])
 print(f'重心が最も北にある湖={recs_lake[northest_index]["W09_001"]}  北緯{centers[northest_index][1]}度')
@@ -333,8 +348,11 @@ trans = osr.CoordinateTransformation(src_srs, dst_srs)  # 緯度経度→UTM座�
 for shp, rec in zip(shps_lake, recs_lake):
     # UTM座標に変換
     lake_utm = list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points))
+    # shp.partsに基づきポリゴン点を分割（穴を定義）
+    parts = [i for i in shp.parts] + [len(lake_utm) - 1]
+    points_hole = [lake_utm[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)]
     # ポリゴンデータに変換
-    poly = Polygon(lake_utm)
+    poly = Polygon(points_hole[0], points_hole[1:])
     # 面積を算出（m2 → km2に単位変換）
     area = poly.area/1000000
     print(f'{rec["W09_001"]}  面積={area}km2')
@@ -342,9 +360,15 @@ for shp, rec in zip(shps_lake, recs_lake):
 # %% ポリゴンデータ操作3: 面積を一括取得（shapelyライブラリ使用）
 # UTM座標に変換
 polys_utm = [list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points)) for shp in shps_lake]
+# shp.partsに基づきポリゴン点を一括分割
+parts_list = [[i for i in shp.parts] + [len(shp.points) - 1] for shp in shps_lake]
+points_hole_list = [[poly[parts[i]:parts[i + 1]] for i in range(len(parts) - 1)] for poly, parts in zip(polys_utm, parts_list)]
 # 面積を一括計算
-areas = [Polygon(poly).area/1000000 for poly in polys_utm]
+areas = [Polygon(points_hole[0], points_hole[1:]).area/1000000 for points_hole in points_hole_list]
 # 面積最大の湖を表示
 biggest_index = np.argmax(areas)
 print(f'面積最大の湖={recs_lake[biggest_index]["W09_001"]}  面積={areas[biggest_index]}km2')
 
+
+
+# %%
