@@ -369,6 +369,40 @@ areas = [Polygon(points_hole[0], points_hole[1:]).area/1000000 for points_hole i
 biggest_index = np.argmax(areas)
 print(f'面積最大の湖={recs_lake[biggest_index]["W09_001"]}  面積={areas[biggest_index]}km2')
 
+# %% ジオコーディング（geopy + Nominatimを使用）
+from geopy.geocoders import Nominatim
+# 堤高150m以上のダムに絞る
+over150m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 150]
+over150m_shps = [shp for i, shp in enumerate(shps_dam) if i in over150m_indices]
+over150m_recs = [rec for i, rec in enumerate(recs_dam) if i in over150m_indices]
+
+# Nominatimを指定
+geolocator = Nominatim(user_agent="test")
+# ダムを走査
+for shp, rec in zip(over150m_shps, over150m_recs):
+    # ジオコーディング
+    name = f'{rec["W01_001"]}ダム'  # ダム名で検索
+    location = geolocator.geocode(name)  # ジオコーディング実行
+    # 検索結果が得られたときのみ表示
+    if location is not None:
+        print(f'{rec["W01_001"]}ダム  Nominatim座標={location.latitude, location.longitude} Shapefile座標={shp.points[0][1], shp.points[0][0]}')
+
+# %% 逆ジオコーディング（geopy + Nominatimを使用）
+from geopy.geocoders import Nominatim
+# 堤高150m以上のダムに絞る
+over150m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 150]
+over150m_shps = [shp for i, shp in enumerate(shps_dam) if i in over150m_indices]
+over150m_recs = [rec for i, rec in enumerate(recs_dam) if i in over150m_indices]
+
+# Nominatimを指定
+geolocator = Nominatim(user_agent="test")
+# ダムを走査
+for shp, rec in zip(over150m_shps, over150m_recs):
+    # 逆ジオコーディング
+    point_str = f'{shp.points[0][1]}, {shp.points[0][0]}'  # "緯度, 経度"を指定
+    location = geolocator.reverse(point_str)  # 逆ジオコーディング実行
+    print(f'{rec["W01_001"]}ダム  {location.address}')
+
 # %% 出力1：ポイントデータ出力（Shapefile）
 # 出力用のデータ（堤高さ100m以上のダム）作成
 # 堤高100m以上のインデックス取得
