@@ -425,6 +425,11 @@ with shapefile.Writer(outpath, encoding='cp932') as w:
         attr = (f'{rec["W01_001"]}ダム', rec["W01_007"], rec["W01_010"])
         w.record(*attr)
 
+# プロジェクションファイル作成 (EPSG:4612)
+with open('./dams_over100m/dams_over100m.prj',  "w") as prj:
+    epsg = 'GEOGCS["JGD2000",DATUM["Japanese_Geodetic_Datum_2000",SPHEROID["GRS 1980",6378137,298.257222101]],TOWGS84[0,0,0,0,0,0,0],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]'
+    prj.write(epsg)
+
 # %% 出力1：ポイントデータ出力（GeoJSON）
 import json
 import geojson
@@ -477,6 +482,11 @@ with shapefile.Writer(outpath, encoding='cp932') as w:
         # 属性値を追加
         attr = (rec["W05_004"], rec["W05_002"])
         w.record(*attr)
+
+# プロジェクションファイル作成 (EPSG:4612)
+with open('./river_top5/river_top5.prj',  "w") as prj:
+    epsg = 'GEOGCS["JGD2000",DATUM["Japanese_Geodetic_Datum_2000",SPHEROID["GRS 1980",6378137,298.257222101]],TOWGS84[0,0,0,0,0,0,0],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]'
+    prj.write(epsg)
 
 # %% 出力2：ラインデータ出力（GeoJSON）
 import json
@@ -544,6 +554,11 @@ with shapefile.Writer(outpath, encoding='cp932') as w:
         # 属性値を追加
         attr = (rec["W09_001"], rec["W09_003"], area)
         w.record(*attr)
+
+# プロジェクションファイル作成 (EPSG:4612)
+with open('./lake_over100km2/lake_over100km2.prj',  "w") as prj:
+    epsg = 'GEOGCS["JGD2000",DATUM["Japanese_Geodetic_Datum_2000",SPHEROID["GRS 1980",6378137,298.257222101]],TOWGS84[0,0,0,0,0,0,0],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]'
+    prj.write(epsg)
 
 # %% 出力3：ポリゴンデータ出力（GeoJSON）
 import json

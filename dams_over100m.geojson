@@ -14,7 +14,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u672d\u5185\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 114.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 54000
+        "\u7dcf\u8caf\u6c34\u91cf": 54000.0
       }
     },
     {
@@ -30,7 +30,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9ad8\u898b\u30c0\u30e0",
         "\u5824\u9ad8": 120.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 229000
+        "\u7dcf\u8caf\u6c34\u91cf": 229000.0
       }
     },
     {
@@ -46,7 +46,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u65b0\u51a0\u30c0\u30e0",
         "\u5824\u9ad8": 102.8,
-        "\u7dcf\u8caf\u6c34\u91cf": 145000
+        "\u7dcf\u8caf\u6c34\u91cf": 145000.0
       }
     },
     {
@@ -62,7 +62,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5915\u5f35\u30b7\u30e5\u30fc\u30d1\u30ed\uff08\u518d\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 110.6,
-        "\u7dcf\u8caf\u6c34\u91cf": 427000
+        "\u7dcf\u8caf\u6c34\u91cf": 427000.0
       }
     },
     {
@@ -78,7 +78,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u8c4a\u5e73\u5ce1\u30c0\u30e0",
         "\u5824\u9ad8": 102.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 47100
+        "\u7dcf\u8caf\u6c34\u91cf": 47100.0
       }
     },
     {
@@ -94,7 +94,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5b9a\u5c71\u6e13\u30c0\u30e0",
         "\u5824\u9ad8": 117.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 82300
+        "\u7dcf\u8caf\u6c34\u91cf": 82300.0
       }
     },
     {
@@ -110,7 +110,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u647a\u4e0a\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 105.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 153000
+        "\u7dcf\u8caf\u6c34\u91cf": 153000.0
       }
     },
     {
@@ -126,7 +126,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5c0f\u7389\u30c0\u30e0",
         "\u5824\u9ad8": 102.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 13930
+        "\u7dcf\u8caf\u6c34\u91cf": 13930.0
       }
     },
     {
@@ -142,7 +142,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5927\u5185\u30c0\u30e0",
         "\u5824\u9ad8": 102.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 18500
+        "\u7dcf\u8caf\u6c34\u91cf": 18500.0
       }
     },
     {
@@ -158,7 +158,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u65e5\u4e2d\u30c0\u30e0",
         "\u5824\u9ad8": 101.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 24600
+        "\u7dcf\u8caf\u6c34\u91cf": 24600.0
       }
     },
     {
@@ -174,7 +174,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u7530\u5b50\u5009\u30c0\u30e0",
         "\u5824\u9ad8": 145.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 494000
+        "\u7dcf\u8caf\u6c34\u91cf": 494000.0
       }
     },
     {
@@ -190,7 +190,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6210\u702c\u30c0\u30e0",
         "\u5824\u9ad8": 113.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 78500
+        "\u7dcf\u8caf\u6c34\u91cf": 78500.0
       }
     },
     {
@@ -206,7 +206,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9577\u4e95\u30c0\u30e0",
         "\u5824\u9ad8": 125.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 51000
+        "\u7dcf\u8caf\u6c34\u91cf": 51000.0
       }
     },
     {
@@ -222,7 +222,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5bd2\u6cb3\u6c5f\u30c0\u30e0",
         "\u5824\u9ad8": 112.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 109000
+        "\u7dcf\u8caf\u6c34\u91cf": 109000.0
       }
     },
     {
@@ -238,7 +238,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6708\u5c71\u30c0\u30e0",
         "\u5824\u9ad8": 123.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 65000
+        "\u7dcf\u8caf\u6c34\u91cf": 65000.0
       }
     },
     {
@@ -254,7 +254,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u7b52\u7802\u5b50\u30c0\u30e0",
         "\u5824\u9ad8": 114.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 45700
+        "\u7dcf\u8caf\u6c34\u91cf": 45700.0
       }
     },
     {
@@ -270,7 +270,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u80c6\u6ca2\uff08\u518d\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 127.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 143000
+        "\u7dcf\u8caf\u6c34\u91cf": 143000.0
       }
     },
     {
@@ -286,7 +286,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u86c7\u5c3e\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 104.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 10500
+        "\u7dcf\u8caf\u6c34\u91cf": 10500.0
       }
     },
     {
@@ -302,7 +302,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5ddd\u4fe3\u30c0\u30e0",
         "\u5824\u9ad8": 117.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 87600
+        "\u7dcf\u8caf\u6c34\u91cf": 87600.0
       }
     },
     {
@@ -318,7 +318,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5ddd\u6cbb\u30c0\u30e0",
         "\u5824\u9ad8": 140.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 83000
+        "\u7dcf\u8caf\u6c34\u91cf": 83000.0
       }
     },
     {
@@ -334,7 +334,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e94\u5341\u91cc\u30c0\u30e0",
         "\u5824\u9ad8": 112.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 55000
+        "\u7dcf\u8caf\u6c34\u91cf": 55000.0
       }
     },
     {
@@ -350,7 +350,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6e6f\u897f\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 119.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 75000
+        "\u7dcf\u8caf\u6c34\u91cf": 75000.0
       }
     },
     {
@@ -366,7 +366,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u77e2\u6728\u6ca2\u30c0\u30e0",
         "\u5824\u9ad8": 131.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 204300
+        "\u7dcf\u8caf\u6c34\u91cf": 204300.0
       }
     },
     {
@@ -382,7 +382,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5948\u826f\u4fe3\u30c0\u30e0",
         "\u5824\u9ad8": 158.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 90000
+        "\u7dcf\u8caf\u6c34\u91cf": 90000.0
       }
     },
     {
@@ -398,7 +398,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u7389\u539f\u30c0\u30e0",
         "\u5824\u9ad8": 116.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 14800
+        "\u7dcf\u8caf\u6c34\u91cf": 14800.0
       }
     },
     {
@@ -414,7 +414,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u516b\u30c3\u5834\u30c0\u30e0",
         "\u5824\u9ad8": 116.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 107500
+        "\u7dcf\u8caf\u6c34\u91cf": 107500.0
       }
     },
     {
@@ -430,7 +430,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e0a\u91ce\u30c0\u30e0",
         "\u5824\u9ad8": 120.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 18400
+        "\u7dcf\u8caf\u6c34\u91cf": 18400.0
       }
     },
     {
@@ -446,7 +446,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e0b\u4e45\u4fdd\u30c0\u30e0",
         "\u5824\u9ad8": 129.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 130000
+        "\u7dcf\u8caf\u6c34\u91cf": 130000.0
       }
     },
     {
@@ -462,7 +462,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u8349\u6728\u30c0\u30e0",
         "\u5824\u9ad8": 140.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 60500
+        "\u7dcf\u8caf\u6c34\u91cf": 60500.0
       }
     },
     {
@@ -478,7 +478,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5c0f\u6cb3\u5185\u30c0\u30e0",
         "\u5824\u9ad8": 149.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 189100
+        "\u7dcf\u8caf\u6c34\u91cf": 189100.0
       }
     },
     {
@@ -494,7 +494,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5bae\u30f6\u702c\u30c0\u30e0",
         "\u5824\u9ad8": 156.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 193000
+        "\u7dcf\u8caf\u6c34\u91cf": 193000.0
       }
     },
     {
@@ -510,7 +510,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6edd\u6ca2\u30c0\u30e0",
         "\u5824\u9ad8": 132.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 63000
+        "\u7dcf\u8caf\u6c34\u91cf": 63000.0
       }
     },
     {
@@ -526,7 +526,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6d66\u5c71\u30c0\u30e0",
         "\u5824\u9ad8": 156.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 58000
+        "\u7dcf\u8caf\u6c34\u91cf": 58000.0
       }
     },
     {
@@ -542,7 +542,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5965\u4e09\u9762\u30c0\u30e0",
         "\u5824\u9ad8": 116.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 125500
+        "\u7dcf\u8caf\u6c34\u91cf": 125500.0
       }
     },
     {
@@ -558,7 +558,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u52a0\u6cbb\u5ddd\u6cbb\u6c34\u30c0\u30e0",
         "\u5824\u9ad8": 106.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 22500
+        "\u7dcf\u8caf\u6c34\u91cf": 22500.0
       }
     },
     {
@@ -574,7 +574,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e09\u56fd\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 119.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 27500
+        "\u7dcf\u8caf\u6c34\u91cf": 27500.0
       }
     },
     {
@@ -590,7 +590,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5965\u53ea\u898b\u30c0\u30e0",
         "\u5824\u9ad8": 157.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 601000
+        "\u7dcf\u8caf\u6c34\u91cf": 601000.0
       }
     },
     {
@@ -606,7 +606,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9ed2\u90e8\u30c0\u30e0",
         "\u5824\u9ad8": 186.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 199285
+        "\u7dcf\u8caf\u6c34\u91cf": 199285.0
       }
     },
     {
@@ -622,7 +622,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6709\u5cf0\u30c0\u30e0",
         "\u5824\u9ad8": 140.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 222000
+        "\u7dcf\u8caf\u6c34\u91cf": 222000.0
       }
     },
     {
@@ -638,7 +638,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5229\u8cc0\u30c0\u30e0",
         "\u5824\u9ad8": 112.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 31100
+        "\u7dcf\u8caf\u6c34\u91cf": 31100.0
       }
     },
     {
@@ -654,7 +654,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5200\u5229\u30c0\u30e0",
         "\u5824\u9ad8": 101.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 31400
+        "\u7dcf\u8caf\u6c34\u91cf": 31400.0
       }
     },
     {
@@ -670,7 +670,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5883\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 115.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 59900
+        "\u7dcf\u8caf\u6c34\u91cf": 59900.0
       }
     },
     {
@@ -686,7 +686,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u624b\u53d6\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 153.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 231000
+        "\u7dcf\u8caf\u6c34\u91cf": 231000.0
       }
     },
     {
@@ -702,7 +702,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e5d\u982d\u7adc\u30c0\u30e0",
         "\u5824\u9ad8": 128.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 353000
+        "\u7dcf\u8caf\u6c34\u91cf": 353000.0
       }
     },
     {
@@ -718,7 +718,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u771f\u540d\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 127.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 115000
+        "\u7dcf\u8caf\u6c34\u91cf": 115000.0
       }
     },
     {
@@ -734,7 +734,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u685d\u8c37\u30c0\u30e0",
         "\u5824\u9ad8": 100.4,
-        "\u7dcf\u8caf\u6c34\u91cf": 25000
+        "\u7dcf\u8caf\u6c34\u91cf": 25000.0
       }
     },
     {
@@ -750,7 +750,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u845b\u91ce\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 105.2,
-        "\u7dcf\u8caf\u6c34\u91cf": 11500
+        "\u7dcf\u8caf\u6c34\u91cf": 11500.0
       }
     },
     {
@@ -766,7 +766,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5c0f\u6e0b\u30c0\u30e0",
         "\u5824\u9ad8": 105.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 58000
+        "\u7dcf\u8caf\u6c34\u91cf": 58000.0
       }
     },
     {
@@ -782,7 +782,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5473\u564c\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 140.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 61000
+        "\u7dcf\u8caf\u6c34\u91cf": 61000.0
       }
     },
     {
@@ -798,7 +798,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u7267\u5c3e\uff08\u518d\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 105.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 75000
+        "\u7dcf\u8caf\u6c34\u91cf": 75000.0
       }
     },
     {
@@ -814,7 +814,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u7267\u5c3e\uff08\u5143\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 105.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 75000
+        "\u7dcf\u8caf\u6c34\u91cf": 75000.0
       }
     },
     {
@@ -830,7 +830,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5357\u76f8\u6728\u30c0\u30e0",
         "\u5824\u9ad8": 136.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 19170
+        "\u7dcf\u8caf\u6c34\u91cf": 19170.0
       }
     },
     {
@@ -846,7 +846,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5948\u5ddd\u6e21\u30c0\u30e0",
         "\u5824\u9ad8": 155.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 123000
+        "\u7dcf\u8caf\u6c34\u91cf": 123000.0
       }
     },
     {
@@ -862,7 +862,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9ad8\u702c\u30c0\u30e0",
         "\u5824\u9ad8": 176.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 76200
+        "\u7dcf\u8caf\u6c34\u91cf": 76200.0
       }
     },
     {
@@ -878,7 +878,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e03\u5009\u30c0\u30e0",
         "\u5824\u9ad8": 125.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 32500
+        "\u7dcf\u8caf\u6c34\u91cf": 32500.0
       }
     },
     {
@@ -894,7 +894,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5927\u753a\u30c0\u30e0",
         "\u5824\u9ad8": 107.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 33900
+        "\u7dcf\u8caf\u6c34\u91cf": 33900.0
       }
     },
     {
@@ -910,7 +910,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5c0f\u91cc\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 114.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 15100
+        "\u7dcf\u8caf\u6c34\u91cf": 15100.0
       }
     },
     {
@@ -926,7 +926,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u65b0\u4e38\u5c71\uff08\u518d\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 122.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 146350
+        "\u7dcf\u8caf\u6c34\u91cf": 146350.0
       }
     },
     {
@@ -942,7 +942,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u963f\u6728\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 101.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 48000
+        "\u7dcf\u8caf\u6c34\u91cf": 48000.0
       }
     },
     {
@@ -958,7 +958,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9ad8\u6839\u7b2c\u4e00\u30c0\u30e0",
         "\u5824\u9ad8": 133.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 43568
+        "\u7dcf\u8caf\u6c34\u91cf": 43568.0
       }
     },
     {
@@ -974,7 +974,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5ca9\u5c4b\u30c0\u30e0",
         "\u5824\u9ad8": 127.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 173500
+        "\u7dcf\u8caf\u6c34\u91cf": 173500.0
       }
     },
     {
@@ -990,7 +990,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5ddd\u6d66\u30c0\u30e0",
         "\u5824\u9ad8": 107.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 17200
+        "\u7dcf\u8caf\u6c34\u91cf": 17200.0
       }
     },
     {
@@ -1006,7 +1006,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5fb3\u5c71\u30c0\u30e0",
         "\u5824\u9ad8": 161.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 660000
+        "\u7dcf\u8caf\u6c34\u91cf": 660000.0
       }
     },
     {
@@ -1022,7 +1022,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e0b\u5c0f\u9ce5\u30c0\u30e0",
         "\u5824\u9ad8": 119.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 123037
+        "\u7dcf\u8caf\u6c34\u91cf": 123037.0
       }
     },
     {
@@ -1038,7 +1038,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5fa1\u6bcd\u8863\u30c0\u30e0",
         "\u5824\u9ad8": 131.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 370000
+        "\u7dcf\u8caf\u6c34\u91cf": 370000.0
       }
     },
     {
@@ -1054,7 +1054,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u7551\u8599\u7b2c\u4e00\u30c0\u30e0",
         "\u5824\u9ad8": 125.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 107400
+        "\u7dcf\u8caf\u6c34\u91cf": 107400.0
       }
     },
     {
@@ -1070,7 +1070,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e95\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 103.6,
-        "\u7dcf\u8caf\u6c34\u91cf": 150000
+        "\u7dcf\u8caf\u6c34\u91cf": 150000.0
       }
     },
     {
@@ -1086,7 +1086,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9577\u5cf6\u30c0\u30e0",
         "\u5824\u9ad8": 109.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 78000
+        "\u7dcf\u8caf\u6c34\u91cf": 78000.0
       }
     },
     {
@@ -1102,7 +1102,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4f50\u4e45\u9593\uff08\u518d\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 155.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 343000
+        "\u7dcf\u8caf\u6c34\u91cf": 343000.0
       }
     },
     {
@@ -1118,7 +1118,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6c34\u7aaa\u30c0\u30e0",
         "\u5824\u9ad8": 105.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 29981
+        "\u7dcf\u8caf\u6c34\u91cf": 29981.0
       }
     },
     {
@@ -1134,7 +1134,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4f50\u4e45\u9593\uff08\u5143\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 155.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 326848
+        "\u7dcf\u8caf\u6c34\u91cf": 326848.0
       }
     },
     {
@@ -1150,7 +1150,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u65b0\u8c4a\u6839\u30c0\u30e0",
         "\u5824\u9ad8": 116.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 53500
+        "\u7dcf\u8caf\u6c34\u91cf": 53500.0
       }
     },
     {
@@ -1166,7 +1166,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u8a2d\u697d\u30c0\u30e0",
         "\u5824\u9ad8": 129.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 98000
+        "\u7dcf\u8caf\u6c34\u91cf": 98000.0
       }
     },
     {
@@ -1182,7 +1182,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e39\u751f\u30c0\u30e0",
         "\u5824\u9ad8": 145.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 150000
+        "\u7dcf\u8caf\u6c34\u91cf": 150000.0
       }
     },
     {
@@ -1198,7 +1198,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9577\u8c37\u30c0\u30e0",
         "\u5824\u9ad8": 102.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 9604
+        "\u7dcf\u8caf\u6c34\u91cf": 9604.0
       }
     },
     {
@@ -1214,7 +1214,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u98a8\u5c4b\u30c0\u30e0",
         "\u5824\u9ad8": 101.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 130000
+        "\u7dcf\u8caf\u6c34\u91cf": 130000.0
       }
     },
     {
@@ -1230,7 +1230,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u702c\u6238\u30c0\u30e0",
         "\u5824\u9ad8": 110.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 16850
+        "\u7dcf\u8caf\u6c34\u91cf": 16850.0
       }
     },
     {
@@ -1246,7 +1246,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6c60\u539f\u30c0\u30e0",
         "\u5824\u9ad8": 111.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 338373
+        "\u7dcf\u8caf\u6c34\u91cf": 338373.0
       }
     },
     {
@@ -1262,7 +1262,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5742\u672c\u30c0\u30e0",
         "\u5824\u9ad8": 103.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 87000
+        "\u7dcf\u8caf\u6c34\u91cf": 87000.0
       }
     },
     {
@@ -1278,7 +1278,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u65e9\u660e\u6d66\u30c0\u30e0",
         "\u5824\u9ad8": 106.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 316000
+        "\u7dcf\u8caf\u6c34\u91cf": 316000.0
       }
     },
     {
@@ -1294,7 +1294,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9b5a\u6881\u702c\u30c0\u30e0",
         "\u5824\u9ad8": 115.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 104625
+        "\u7dcf\u8caf\u6c34\u91cf": 104625.0
       }
     },
     {
@@ -1310,7 +1310,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5bcc\u90f7\u30c0\u30e0",
         "\u5824\u9ad8": 106.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 52000
+        "\u7dcf\u8caf\u6c34\u91cf": 52000.0
       }
     },
     {
@@ -1326,7 +1326,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5c71\u9ce5\u5742\u30c0\u30e0",
         "\u5824\u9ad8": 103.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 24900
+        "\u7dcf\u8caf\u6c34\u91cf": 24900.0
       }
     },
     {
@@ -1342,7 +1342,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u6e29\u4e95\u30c0\u30e0",
         "\u5824\u9ad8": 156.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 82000
+        "\u7dcf\u8caf\u6c34\u91cf": 82000.0
       }
     },
     {
@@ -1358,7 +1358,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5f25\u6804\u30c0\u30e0",
         "\u5824\u9ad8": 120.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 112000
+        "\u7dcf\u8caf\u6c34\u91cf": 112000.0
       }
     },
     {
@@ -1374,7 +1374,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u65b0\u6210\u7fbd\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 103.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 127500
+        "\u7dcf\u8caf\u6c34\u91cf": 127500.0
       }
     },
     {
@@ -1390,7 +1390,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e94\u30f6\u5c71\u30c0\u30e0",
         "\u5824\u9ad8": 102.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 40200
+        "\u7dcf\u8caf\u6c34\u91cf": 40200.0
       }
     },
     {
@@ -1406,7 +1406,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5c0f\u77f3\u539f\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 139.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 40000
+        "\u7dcf\u8caf\u6c34\u91cf": 40000.0
       }
     },
     {
@@ -1422,7 +1422,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u53b3\u6728\u30c0\u30e0",
         "\u5824\u9ad8": 117.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 13600
+        "\u7dcf\u8caf\u6c34\u91cf": 13600.0
       }
     },
     {
@@ -1438,7 +1438,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u5ddd\u8fba\u5ddd\u30c0\u30e0",
         "\u5824\u9ad8": 107.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 133000
+        "\u7dcf\u8caf\u6c34\u91cf": 133000.0
       }
     },
     {
@@ -1454,7 +1454,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e0a\u690e\u8449\u30c0\u30e0",
         "\u5824\u9ad8": 110.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 91550
+        "\u7dcf\u8caf\u6c34\u91cf": 91550.0
       }
     },
     {
@@ -1470,7 +1470,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u4e00\u30c4\u702c\u30c0\u30e0",
         "\u5824\u9ad8": 130.0,
-        "\u7dcf\u8caf\u6c34\u91cf": 261315
+        "\u7dcf\u8caf\u6c34\u91cf": 261315.0
       }
     },
     {
@@ -1486,7 +1486,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9db4\u7530\uff08\u5143\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 117.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 123000
+        "\u7dcf\u8caf\u6c34\u91cf": 123000.0
       }
     },
     {
@@ -1502,7 +1502,7 @@
       "properties": {
         "\u30c0\u30e0\u540d": "\u9db4\u7530\uff08\u518d\uff09\u30c0\u30e0",
         "\u5824\u9ad8": 117.5,
-        "\u7dcf\u8caf\u6c34\u91cf": 123000
+        "\u7dcf\u8caf\u6c34\u91cf": 123000.0
       }
     }
   ]
