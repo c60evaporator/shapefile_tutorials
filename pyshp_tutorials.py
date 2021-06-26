@@ -76,7 +76,7 @@ src_proj = "EPSG:2455" # 変換前の座標系を指定
 dst_proj = "EPSG:4612" # 変換後の座標系を指定
 transformer = pyproj.Transformer.from_crs(src_proj, dst_proj) # 変換式を作成
 
-# 取得した座標系を基に座標変換（pyshpライブラリで読み込んだデータにosgeoライブラリで作成した変換式適用）
+# 取得した座標系を基に座標変換（pyshpライブラリで読み込んだデータにpyprojライブラリで作成した変換式適用）
 for shp in shps_farm:
     print(f'変換前ポリゴン位置{shp.points}')  # 位置情報（座標変換前）
     # 座標変換を実行
@@ -84,7 +84,7 @@ for shp in shps_farm:
     print(f'変換後ポリゴン位置{points_transfer}')  # 位置情報（座標変換後）
 
 # %% 処理1 一括座標変換（osgeo.osrライブラリ使用）
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標135度(EPSG3099)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
@@ -125,7 +125,7 @@ df_prefecture['latitude'] = df_prefecture['都道府県庁 緯度'].apply(lambda
 dict_pref_office = {row['都道府県']: (row['longitude'], row['latitude']) for i, row in df_prefecture.iterrows()}
 
 # %% 処理3(ポイントデータ操作2): 緯度経度からポイント間の距離を測定（osgeo.osrライブラリでUTM座標に変換＋shapelyライブラリ使用）
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標141度(EPSG3100)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標44N系(EPSG3100)　osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3100)
@@ -133,7 +133,7 @@ trans = osr.CoordinateTransformation(src_srs, dst_srs)
 
 # ダムデータを1点ずつ走査
 for shp, rec in zip(shps_dam, recs_dam):
-    # ダムの位置（平面直角座標に変換）
+    # ダムの位置（UTM座標に変換）
     dam_point = trans.TransformPoint(shp.points[0][1], shp.points[0][0])[:2]
     # 都道府県名を所在地から正規表現で抜き出して位置変換
     prefecture = re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group()
@@ -177,7 +177,7 @@ print(f'{prefectures[farthest_index]}庁から最も遠いダム={recs_dam[farth
 
 # %% 処理4(ポイントデータ操作3): 最も近い点を探す（osgeo.osrライブラリでUTM座標に変換＋scikit-learn使用）
 from sklearn.neighbors import NearestNeighbors
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標135度(EPSG3099)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　Osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
@@ -203,7 +203,7 @@ for shp, rec in zip(shps_dam, recs_dam):
 
 # %% 処理4(ポイントデータ操作3): 最も近い点を一括検索（osgeo.osrライブラリでUTM座標に変換＋scikit-learn使用）
 from sklearn.neighbors import NearestNeighbors
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標135度(EPSG3099)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
@@ -231,10 +231,10 @@ print(f'最近傍ダムからの距離が最大のダム={recs_dam[farthest_inde
 # %% 処理5(ラインデータ操作1): ラインデータ変換（shapelyライブラリ使用）
 for shp, rec in zip(shps_river, recs_river):
     line = LineString(shp.points)
-    print(f'{rec["W05_004"]} {list(line.coords)}')  # 位置情報を表示
+    print(f'{rec["W05_004"]} {list(line.coords)}')  # 河川名と位置情報を表示
 
 # %% 処理6(ラインデータ操作2): ラインの長さ測定（osgeo.osrライブラリでUTM座標に変換＋shapelyライブラリ使用）
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標135度(EPSG3099)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
@@ -251,7 +251,7 @@ for shp, rec in zip(shps_river, recs_river):
     print(f'{rec["W05_004"]}  長さ={length}m')
 
 # %% 処理6(ラインデータ操作2): 長さを一括測定（osgeo.osrライブラリでUTM座標に変換＋shapelyライブラリ使用）
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標135度(EPSG3099)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
@@ -295,7 +295,7 @@ for shp, rec in zip(shps_lake, recs_lake):
     print(f'{rec["W09_001"]}  重心={center}')
 
 # %% 処理8(ポリゴンデータ操作2): ポリゴンの重心測定（osgeo.osrライブラリでUTM座標に変換＋shapelyライブラリ使用）
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標135度(EPSG3099)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
@@ -336,7 +336,7 @@ northest_index = np.argmax([center[1] for center in centers])
 print(f'重心が最も北にある湖={recs_lake[northest_index]["W09_001"]}  北緯{centers[northest_index][1]}度')
 
 # %% 処理9(ポリゴンデータ操作3): ポリゴンの面積測定（osgeo.osrライブラリでUTM座標に変換＋shapelyライブラリ使用）
-# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標135度(EPSG3099)　Osgeo.osrを使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　osgeo.osrを使用）
 src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
 src_srs.ImportFromEPSG(4612)
 dst_srs.ImportFromEPSG(3099)
@@ -355,8 +355,13 @@ for shp, rec in zip(shps_lake, recs_lake):
     area = poly.area/1000000
     print(f'{rec["W09_001"]}  面積={area}km2')
 
-# %% 処理9(ポリゴンデータ操作3): ポリゴン面積を一括取得（shapelyライブラリ使用）
-# UTM座標に変換
+# %% 処理9(ポリゴンデータ操作3): ポリゴン面積を一括取得（osgeo.osrライブラリでUTM座標に一括変換＋shapelyライブラリ使用）
+# 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)　osgeo.osrを使用）
+src_srs, dst_srs = osr.SpatialReference(), osr.SpatialReference()
+src_srs.ImportFromEPSG(4612)
+dst_srs.ImportFromEPSG(3099)
+trans = osr.CoordinateTransformation(src_srs, dst_srs)  # 緯度経度→UTM座標への変換式
+# UTM座標に一括変換
 polys_utm = [list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points)) for shp in shps_lake]
 # shp.partsに基づきポリゴン点を一括分割
 parts_list = [[i for i in shp.parts] + [len(shp.points) - 1] for shp in shps_lake]
