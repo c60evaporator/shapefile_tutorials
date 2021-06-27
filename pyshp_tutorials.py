@@ -407,7 +407,7 @@ for shp, rec in zip(over150m_shps, over150m_recs):
     print(f'{rec["W01_001"]}ダム  {location.address}')
 
 # %% 保存1: ポイントデータ出力（Shapefile）
-# 出力用のデータ（堤高さ100m以上のダム）作成
+# 出力用のデータ（堤高100m以上のダム）作成
 # 堤高100m以上のインデックス取得
 over100m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 100]
 # 堤高100m以上のジオメトリと属性取得
