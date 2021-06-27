@@ -91,13 +91,13 @@ dst_srs.ImportFromEPSG(3099)
 trans = osr.CoordinateTransformation(src_srs, dst_srs)
 
 # ポイント（ダムデータ、TransformPointの引数は緯度,経度の順番で指定）
-points_utm = [list(trans.TransformPoint(shp.points[0][1], shp.points[0][0])[:2]) for shp in shps_dam]
+dam_points_utm = [list(trans.TransformPoint(shp.points[0][1], shp.points[0][0])[:2]) for shp in shps_dam]
 
 # ライン（河川データ）
-lines_utm = [list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points)) for shp in shps_river]
+river_lines_utm = [list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points)) for shp in shps_river]
 
 # ポリゴン（湖沼データ）
-polys_utm = [list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points)) for shp in shps_lake]
+lake_polys_utm = [list(map(lambda point: trans.TransformPoint(point[1], point[0])[:2], shp.points)) for shp in shps_lake]
 
 # %% 処理2(ポイントデータ操作1): ポイントデータ変換（shapelyライブラリ使用）
 for shp in shps_dam:
