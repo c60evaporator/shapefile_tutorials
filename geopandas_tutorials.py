@@ -3,6 +3,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 import pyproj
 import pandas as pd
+import numpy as np
 import re
 
 # 入力ファイルのパス
@@ -37,6 +38,8 @@ for i, row in gdf_river.iterrows():
 for i, row in gdf_lake.iterrows():
     print(f'ポリゴン位置{row["geometry"]}')  # ジオメトリ情報
     print(f'湖沼名:{row["W09_001"]}\n最大水深:{row["W09_003"]}千m3\n水面標高:{row["W09_004"]}')  # 属性情報
+
+# %% 読込3：GeoJSON読込
 
 # %% 処理1：一括座標変換（変換前座標を取得できるとき）
 # 変換後の座標系指定（平面直角座標13系(EPSG2455) → 緯度経度(EPSG4612)）
@@ -107,6 +110,24 @@ gdf_dam['pref_office_point'] = gdf_dam['prefecture'].apply(
 # ダムデータを1点ずつ走査
 for i, row in gdf_dam.iterrows():
     # 距離を計算（pyprojライブラリ使用）
-    azimuth, bkw_azimuth, dist = grs80.inv(row['geometry'].x, row['geometry'].y, row['pref_office_point'].x, row['pref_office_point'].y)
+    azimuth, bkw_azimuth, dist = grs80.inv(row['geometry'].x, row['geometry'].y,
+                                           row['pref_office_point'].x, row['pref_office_point'].y)
     print(f'{row["W01_001"]}ダム {row["prefecture"]}庁まで{dist/1000}km')
+# %% 処理3: 緯度経度からポイント間の距離を一括測定（pyproj.Geod使用）
+# 距離測定用のGRS80楕円体
+grs80 = pyproj.Geod(ellps='GRS80')
+
+# 都道府県と都道府県庁の位置を紐づけ
+gdf_dam['prefecture'] = gdf_dam['W01_013'].apply(
+    lambda x: re.match('..*?県|..*?府|東京都|北海道', x).group())
+gdf_dam['pref_office_point'] = gdf_dam['prefecture'].apply(
+    lambda x: Point(*dict_pref_office[x]))
+# 距離を計算（pyproj.Geod使用）
+gdf_dam['dist'] = gdf_dam.apply(
+    lambda rec: grs80.inv(rec['geometry'].x, rec['geometry'].y,
+                          rec['pref_office_point'].x, rec['pref_office_point'].y)[2], axis=1)
+
+# 都道府県庁から最も遠いダムを表示
+farthest_index = gdf_dam['dist'].idxmax(axis=1)
+print(f'{gdf_dam.loc[farthest_index, "prefecture"]}庁から最も遠いダム={gdf_dam.loc[farthest_index, "W01_001"]}ダム  距離={gdf_dam.loc[farthest_index, "dist"]/1000}km')
 # %%
