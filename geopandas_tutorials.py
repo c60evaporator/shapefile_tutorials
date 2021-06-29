@@ -59,28 +59,28 @@ dst_proj = 3099  # 変換後の座標系を指定
 
 # ポイント（ダムデータ、TransformPointの引数は緯度,経度の順番で指定）
 gdf_dam_utm = gdf_dam.copy()
-gdf_dam_utm.crs = {'init': f'epsg:{src_proj}'}  # 変換前座標を指定
+gdf_dam_utm.crs = f'epsg:{src_proj}'  # 変換前座標を指定
 gdf_dam_utm = gdf_dam_utm.to_crs(epsg=dst_proj)  # 変換後座標に変換
 
 # ライン（河川データ）
 gdf_river_utm = gdf_river.copy()
-gdf_river_utm.crs = {'init': f'epsg:{src_proj}'}  # 変換前座標を指定
+gdf_river_utm.crs = f'epsg:{src_proj}'  # 変換前座標を指定
 gdf_river_utm = gdf_river_utm.to_crs(epsg=dst_proj)  # 変換後座標に変換
 
 # ポリゴン（湖沼データ）
 gdf_lake_utm = gdf_lake.copy()
-gdf_lake_utm.crs = {'init': f'epsg:{src_proj}'}  # 変換前座標を指定
+gdf_lake_utm.crs = f'epsg:{src_proj}'  # 変換前座標を指定
 gdf_lake_utm = gdf_lake_utm.to_crs(epsg=dst_proj)  # 変換後座標に変換
 
 # %% 処理3(ポイントデータ操作2): ポイント間の距離を測定（平面座標系）
 # 2点が格納されたGeoDataFrame作成
-gdf_new = gpd.GeoDataFrame(crs = {'init': 'epsg:3099'})  # UTM座標53N系(EPSG3099)のGeoDataFrameを作成
+gdf_new = gpd.GeoDataFrame(crs = 'epsg:3099')  # UTM座標53N系(EPSG3099)のGeoDataFrameを作成
 gdf_new['geometry'] = None
-gdf_new.loc[0, 'geometry'] = Point(0, 0)
-gdf_new.loc[1, 'geometry'] = Point(1, 1)
+gdf_new.at[0, 'geometry'] = Point(0, 0)
+gdf_new.at[1, 'geometry'] = Point(1, 1)
 print(gdf_new)
 # 距離測定
-dist = gdf_new.loc[0, 'geometry'].distance(gdf_new.loc[1, 'geometry'])  # 0行目と1行目の距離を測定
+dist = gdf_new.at[0, 'geometry'].distance(gdf_new.at[1, 'geometry'])  # 0行目と1行目の距離を測定
 print(f'距離={dist}')
 
 # %% 処理3用のデータ（都道府県庁緯度経度のDict）準備
@@ -113,6 +113,7 @@ for i, row in gdf_dam.iterrows():
     azimuth, bkw_azimuth, dist = grs80.inv(row['geometry'].x, row['geometry'].y,
                                            row['pref_office_point'].x, row['pref_office_point'].y)
     print(f'{row["W01_001"]}ダム {row["prefecture"]}庁まで{dist/1000}km')
+
 # %% 処理3: 緯度経度からポイント間の距離を一括測定（pyproj.Geod使用）
 # 距離測定用のGRS80楕円体
 grs80 = pyproj.Geod(ellps='GRS80')
@@ -129,5 +130,115 @@ gdf_dam['dist'] = gdf_dam.apply(
 
 # 都道府県庁から最も遠いダムを表示
 farthest_index = gdf_dam['dist'].idxmax(axis=1)
-print(f'{gdf_dam.loc[farthest_index, "prefecture"]}庁から最も遠いダム={gdf_dam.loc[farthest_index, "W01_001"]}ダム  距離={gdf_dam.loc[farthest_index, "dist"]/1000}km')
+print(f'{gdf_dam.at[farthest_index, "prefecture"]}庁から最も遠いダム={gdf_dam.at[farthest_index, "W01_001"]}ダム  距離={gdf_dam.at[farthest_index, "dist"]/1000}km')
+
+# %% 処理4: 最も近い点を探す
+from sklearn.neighbors import NearestNeighbors
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_dam_utm = gdf_dam.copy()
+gdf_dam_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_dam_utm = gdf_dam_utm.to_crs(epsg=3099)  # 変換後座標に変換
+
+# 全点の位置関係を学習
+dam_points_array = np.array([[point.x, point.y] for point in gdf_dam_utm['geometry']])  # ndarray化
+nn = NearestNeighbors(algorithm='ball_tree')
+nn.fit(dam_points_array)
+
+# ダムデータを1点ずつ走査
+for i, row in gdf_dam_utm.iterrows():
+    # 最近傍点を探索
+    point_utm = np.array([[row['geometry'].x, row['geometry'].y]])  # ndarrayに変換
+    dists, result = nn.kneighbors(point_utm, n_neighbors=3)  # 近傍上位3点を探索
+    # 見付かった最近傍点(1番目は自身なので、2番目に近い点が最近傍点)を表示
+    row_nearest = gdf_dam_utm.loc[result[0][1]]  # 最近傍点のデータ取得
+    dist_nearest = dists[0][1]/1000  # 最近傍点までの距離(m単位なのでkm単位に変換ん)
+    print(f'{row["W01_001"]}ダムから最も近いダム: {row_nearest["W01_001"]}ダム  距離={dist_nearest}km')
+
+# %% 処理4: 最も近い点を一括検索
+from sklearn.neighbors import NearestNeighbors
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_dam_utm = gdf_dam.copy()
+gdf_dam_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_dam_utm = gdf_dam_utm.to_crs(epsg=3099)  # 変換後座標に変換
+
+# 全点の位置関係を学習
+dam_points_array = np.array([[point.x, point.y] for point in gdf_dam_utm['geometry']])  # ndarray化
+nn = NearestNeighbors(algorithm='ball_tree')
+nn.fit(dam_points_array)
+
+# 最近傍点を一括探索
+dists, results = nn.kneighbors(dam_points_array)
+# 見付かった最近傍点(1番目は自身なので、2番目に近い点が最近傍点)と距離を保持
+dist_nearest = [dist/1000 for dist in dists[:,1]]  # 最近傍点までの距離(m単位なのでkm単位に変換)
+
+# 最も近いダムからの距離が最大のダムを表示
+farthest_index = np.argmax(dist_nearest)
+print(f'最近傍ダムからの距離が最大のダム={gdf_dam_utm.at[farthest_index, "W01_001"]}ダム\
+    最近傍ダム={gdf_dam_utm.at[results[farthest_index][1], "W01_001"]}ダム\
+    距離={dist_nearest[farthest_index]}km')
+
+# %% 処理6: ラインの長さ測定
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_river_utm = gdf_river.copy()
+gdf_river_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_river_utm = gdf_river_utm.to_crs(epsg=3099)  # 変換後座標に変換
+
+# 河川データを1点ずつ走査
+for i, row in gdf_river_utm.iterrows():
+    # 長さを算出して表示
+    length = row.length
+    print(f'{row["W05_004"]}  長さ={length}m')
+
+# %% 処理6: 長さを一括測定
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_river_utm = gdf_river.copy()
+gdf_river_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_river_utm = gdf_river_utm.to_crs(epsg=3099)  # 変換後座標に変換
+
+# 長さを一括算出(km単位にするため1000で割る)
+gdf_river_utm['river_length'] = gdf_river_utm.length / 1000
+
+# 河川名グルーピングして長さ降順でソート
+df_length = gdf_river_utm[['W05_004', 'river_length']].groupby('W05_004').sum(
+    ).sort_values('river_length', ascending=False)
+print(df_length.head(5))
+# 名称不明と琵琶湖を除外
+df_length = df_length[~df_length.index.isin(['名称不明', '琵琶湖'])]
+print(df_length.head(5))
+
+# %% 処理8: ポリゴンの重心測定（緯度経度座標のまま計算）
+# 湖沼データを1点ずつ走査
+for i, row in gdf_lake.iterrows():
+    # 重心を算出
+    center = list(row['geometry'].centroid.coords)[0]
+    print(f'{row["W09_001"]}  重心={center}')
+
+# %% 処理8: ポリゴンの重心測定（UTM座標に変換）
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_lake_utm = gdf_lake.copy()
+gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_lake_utm = gdf_lake_utm.to_crs(epsg=3099)  # 変換後座標に変換
+
+# 湖沼データを1点ずつ走査
+for i, row in gdf_lake_utm.iterrows():
+    # 重心を算出
+    center_utm = row['geometry'].centroid
+    # 緯度経度座標に戻す（pyprojを使用。TransformPointは緯度→経度の順で返すので、元の座標系に合わせ経度を先に反転させる）
+    transformer = pyproj.Transformer.from_crs("EPSG:3099", "EPSG:4612")
+    center = transformer.transform(center_utm.x, center_utm.y)[1::-1]
+    print(f'{row["W09_001"]}  重心={center}')
+
+    # 座標変換しなかった場合の重心との距離を計算
+    center_not_trans = gdf_lake.at[i, 'geometry'].centroid
+    grs80 = pyproj.Geod(ellps='GRS80')
+    dist = grs80.inv(center[0], center[1], center_not_trans.x, center_not_trans.y)[2]
+    print(f'{row["W09_001"]}  座標変換なしとの差={dist}m')
+
+# %% 処理8: ポリゴン重心位置を一括取得
+# 重心位置を一括計算
+centers = gdf_lake['geometry'].centroid
+# 重心が最も北にある湖を表示
+northest_index = np.argmax([center.y for center in centers])
+print(f'重心が最も北にある湖={gdf_lake.at[northest_index, "W09_001"]}  北緯{centers.at[northest_index].y}度')
+
 # %%
