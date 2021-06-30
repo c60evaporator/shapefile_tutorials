@@ -72,8 +72,8 @@ for shp in shps_farm:
 
 # %% 処理1：座標変換（pyprojライブラリ使用）
 # 変換前後の座標系指定（平面直角座標13系(EPSG2455) → 緯度経度(EPSG4612)）
-src_proj = "EPSG:2455" # 変換前の座標系を指定
-dst_proj = "EPSG:4612" # 変換後の座標系を指定
+src_proj = 'EPSG:2455' # 変換前の座標系を指定
+dst_proj = 'EPSG:4612' # 変換後の座標系を指定
 transformer = pyproj.Transformer.from_crs(src_proj, dst_proj) # 変換式を作成
 
 # 取得した座標系を基に座標変換（pyshpライブラリで読み込んだデータにpyprojライブラリで作成した変換式適用）
@@ -136,7 +136,7 @@ for shp, rec in zip(shps_dam, recs_dam):
     # ダムの位置（UTM座標に変換）
     dam_point = trans.TransformPoint(shp.points[0][1], shp.points[0][0])[:2]
     # 都道府県名を所在地から正規表現で抜き出して位置変換
-    prefecture = re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group()
+    prefecture = re.match('..*?県|..*?府|東京都|北海道', rec['W01_013']).group()
     pref_office_point = dict_pref_office[prefecture]  # 県庁所在地の緯度経度
     pref_office_point = trans.TransformPoint(pref_office_point[1], pref_office_point[0])[:2]
     # ポイントデータとして格納（shapelyライブラリ使用）
@@ -155,7 +155,7 @@ for shp, rec in zip(shps_dam, recs_dam):
     # ダムの位置（緯度経度）
     dam_point = shp.points[0]
     # 都道府県名を所在地から正規表現で抜き出し
-    prefecture = re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group()
+    prefecture = re.match('..*?県|..*?府|東京都|北海道', rec['W01_013']).group()
     pref_office_point = dict_pref_office[prefecture]  # 県庁所在地の緯度経度
     # 距離を計算（pyproj.Geod使用）
     azimuth, bkw_azimuth, dist = grs80.inv(dam_point[0], dam_point[1], pref_office_point[0], pref_office_point[1])
@@ -166,7 +166,7 @@ for shp, rec in zip(shps_dam, recs_dam):
 grs80 = pyproj.Geod(ellps='GRS80')
 
 # 都道府県名を所在地から正規表現で抜き出し
-prefectures = [re.match('..*?県|..*?府|東京都|北海道', rec["W01_013"]).group() for rec in recs_dam]
+prefectures = [re.match('..*?県|..*?府|東京都|北海道', rec['W01_013']).group() for rec in recs_dam]
 pref_office_points = [dict_pref_office[prefecture] for prefecture in prefectures]  # 県庁所在地の緯度経度
 # 距離を計算（pyproj.Geod使用）
 dists = [grs80.inv(shp.points[0][0], shp.points[0][1], pref[0], pref[1])[2] for shp, pref in zip(shps_dam, pref_office_points)]
@@ -375,12 +375,12 @@ print(f'面積最大の湖={recs_lake[biggest_index]["W09_001"]}  面積={areas[
 # %% 処理10: ジオコーディング（geopy + Nominatimを使用）
 from geopy.geocoders import Nominatim
 # 堤高150m以上のダムに絞る
-over150m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 150]
+over150m_indices = [i for i, rec in enumerate(recs_dam) if rec['W01_007'] > 150]
 over150m_shps = [shp for i, shp in enumerate(shps_dam) if i in over150m_indices]
 over150m_recs = [rec for i, rec in enumerate(recs_dam) if i in over150m_indices]
 
 # Nominatimを指定
-geolocator = Nominatim(user_agent="test")
+geolocator = Nominatim(user_agent='test')
 # ダムを走査
 for shp, rec in zip(over150m_shps, over150m_recs):
     # ジオコーディング
@@ -393,7 +393,7 @@ for shp, rec in zip(over150m_shps, over150m_recs):
 # %% 処理11: 逆ジオコーディング（geopy + Nominatimを使用）
 from geopy.geocoders import Nominatim
 # 堤高150m以上のダムに絞る
-over150m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 150]
+over150m_indices = [i for i, rec in enumerate(recs_dam) if rec['W01_007'] > 150]
 over150m_shps = [shp for i, shp in enumerate(shps_dam) if i in over150m_indices]
 over150m_recs = [rec for i, rec in enumerate(recs_dam) if i in over150m_indices]
 
@@ -409,7 +409,7 @@ for shp, rec in zip(over150m_shps, over150m_recs):
 # %% 保存1: ポイントデータ出力（Shapefile）
 # 出力用のデータ（堤高100m以上のダム）作成
 # 堤高100m以上のインデックス取得
-over100m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 100]
+over100m_indices = [i for i, rec in enumerate(recs_dam) if rec['W01_007'] > 100]
 # 堤高100m以上のジオメトリと属性取得
 over100m_shps = [shp for i, shp in enumerate(shps_dam) if i in over100m_indices]
 over100m_recs = [rec for i, rec in enumerate(recs_dam) if i in over100m_indices]
@@ -426,11 +426,11 @@ with shapefile.Writer(outpath, encoding='cp932') as w:
         # ジオメトリ（ポイント）を追加
         w.point(shp.points[0][0], shp.points[0][1])
         # 属性値を追加
-        attr = (f'{rec["W01_001"]}ダム', rec["W01_007"], rec["W01_010"])
+        attr = (f'{rec["W01_001"]}ダム', rec['W01_007'], rec['W01_010'])
         w.record(*attr)
 
 # プロジェクションファイル作成 (EPSG:4612)
-with open('./dams_over100m/dams_over100m.prj',  "w") as prj:
+with open('./dams_over100m/dams_over100m.prj',  'w') as prj:
     epsg = 'GEOGCS["JGD2000",DATUM["Japanese_Geodetic_Datum_2000",SPHEROID["GRS 1980",6378137,298.257222101]],TOWGS84[0,0,0,0,0,0,0],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]'
     prj.write(epsg)
 
@@ -439,7 +439,7 @@ import json
 import geojson
 # 出力用のデータ（堤高100m以上のダム）作成
 # 堤高100m以上のインデックス取得
-over100m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 100]
+over100m_indices = [i for i, rec in enumerate(recs_dam) if rec['W01_007'] > 100]
 # 堤高100m以上のジオメトリと属性取得
 over100m_shps = [shp for i, shp in enumerate(shps_dam) if i in over100m_indices]
 over100m_recs = [rec for i, rec in enumerate(recs_dam) if i in over100m_indices]
@@ -454,21 +454,24 @@ with open(outpath, 'w', encoding='cp932') as w:
         point = geojson.Point((shp.points[0][0], shp.points[0][1]))
         # 属性値を作成
         attr = {'ダム名': f'{rec["W01_001"]}ダム',
-                '堤高': float(rec["W01_007"]),
-                '総貯水量': float(rec["W01_010"])
+                '堤高': float(rec['W01_007']),
+                '総貯水量': float(rec['W01_010'])
                 }
         # Feature（ジオメトリと属性をまとめたもの）を作成してリストに追加
         feature = geojson.Feature(geometry=point, id=i, properties=attr)
         feature_list.append(feature)
     # FeatureのリストをFeatureCollectionに変換
-    feature_collection = geojson.FeatureCollection(feature_list)
+    feature_collection = geojson.FeatureCollection(feature_list, 
+                                                   crs={'type': 'name',  # 座標系を指定
+                                                        'properties': {'name': 'urn:ogc:def:crs:EPSG::4612'}
+                                                        })
     # geojsonファイルに書き出し
     w.write(json.dumps(feature_collection, indent=2))
 
 # %% 保存2: ラインデータ出力（Shapefile）
 # 出力用のデータ（上位5位の河川に絞る）作成
 # 名称不明と琵琶湖以外のインデックス取得
-river_top5_indices = [i for i, rec in enumerate(recs_river) if rec["W05_004"] in ['野洲川', '安曇川', '愛知川', '日野川', '高時川']]
+river_top5_indices = [i for i, rec in enumerate(recs_river) if rec['W05_004'] in ['野洲川', '安曇川', '愛知川', '日野川', '高時川']]
 # 名称不明と琵琶湖以外のジオメトリと属性取得
 river_top5_shps = [shp for i, shp in enumerate(shps_river) if i in river_top5_indices]
 river_top5_recs = [rec for i, rec in enumerate(recs_river) if i in river_top5_indices]
@@ -484,11 +487,11 @@ with shapefile.Writer(outpath, encoding='cp932') as w:
         # ジオメトリ（ライン）を追加
         w.line([shp.points])
         # 属性値を追加
-        attr = (rec["W05_004"], rec["W05_002"])
+        attr = (rec['W05_004'], rec['W05_002'])
         w.record(*attr)
 
 # プロジェクションファイル作成 (EPSG:4612)
-with open('./river_top5/river_top5.prj',  "w") as prj:
+with open('./river_top5/river_top5.prj',  'w') as prj:
     epsg = 'GEOGCS["JGD2000",DATUM["Japanese_Geodetic_Datum_2000",SPHEROID["GRS 1980",6378137,298.257222101]],TOWGS84[0,0,0,0,0,0,0],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]'
     prj.write(epsg)
 
@@ -497,7 +500,7 @@ import json
 import geojson
 # 出力用のデータ（上位5位の河川に絞る）作成
 # 名称不明と琵琶湖以外のインデックス取得
-river_top5_indices = [i for i, rec in enumerate(recs_river) if rec["W05_004"] in ['野洲川', '安曇川', '愛知川', '日野川', '高時川']]
+river_top5_indices = [i for i, rec in enumerate(recs_river) if rec['W05_004'] in ['野洲川', '安曇川', '愛知川', '日野川', '高時川']]
 # 名称不明と琵琶湖以外のジオメトリと属性取得
 river_top5_shps = [shp for i, shp in enumerate(shps_river) if i in river_top5_indices]
 river_top5_recs = [rec for i, rec in enumerate(recs_river) if i in river_top5_indices]
@@ -511,14 +514,17 @@ with open(outpath, 'w', encoding='cp932') as w:
         # ジオメトリ（ポイント）を作成
         line = geojson.LineString(shp.points)
         # 属性値を作成
-        attr = {'河川名': rec["W05_004"],
-                '河川コード': rec["W05_002"]
+        attr = {'河川名': rec['W05_004'],
+                '河川コード': rec['W05_002']
                 }
         # Feature（ジオメトリと属性をまとめたもの）を作成してリストに追加
         feature = geojson.Feature(geometry=line, id=i, properties=attr)
         feature_list.append(feature)
     # FeatureのリストをFeatureCollectionに変換
-    feature_collection = geojson.FeatureCollection(feature_list)
+    feature_collection = geojson.FeatureCollection(feature_list, 
+                                                   crs={'type': 'name',  # 座標系を指定
+                                                        'properties': {'name': 'urn:ogc:def:crs:EPSG::4612'}
+                                                        })
     # geojsonファイルに書き出し
     w.write(json.dumps(feature_collection, indent=2))
 
@@ -556,11 +562,11 @@ with shapefile.Writer(outpath, encoding='cp932') as w:
         # ジオメトリ（ポリゴン）を追加
         w.poly(points_hole)
         # 属性値を追加
-        attr = (rec["W09_001"], rec["W09_003"], area)
+        attr = (rec['W09_001'], rec['W09_003'], area)
         w.record(*attr)
 
 # プロジェクションファイル作成 (EPSG:4612)
-with open('./lake_over100km2/lake_over100km2.prj',  "w") as prj:
+with open('./lake_over100km2/lake_over100km2.prj', 'w') as prj:
     epsg = 'GEOGCS["JGD2000",DATUM["Japanese_Geodetic_Datum_2000",SPHEROID["GRS 1980",6378137,298.257222101]],TOWGS84[0,0,0,0,0,0,0],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]'
     prj.write(epsg)
 
@@ -597,15 +603,18 @@ with open(outpath, 'w', encoding='cp932') as w:
         # ジオメトリ（ポイント）を作成
         poly = geojson.Polygon(points_hole)
         # 属性値を作成
-        attr = {'湖沼名': rec["W09_001"],
-                '最大水深': float(rec["W09_003"]),
+        attr = {'湖沼名': rec['W09_001'],
+                '最大水深': float(rec['W09_003']),
                 '面積': area
                 }
         # Feature（ジオメトリと属性をまとめたもの）を作成してリストに追加
         feature = geojson.Feature(geometry=poly, id=i, properties=attr)
         feature_list.append(feature)
     # FeatureのリストをFeatureCollectionに変換
-    feature_collection = geojson.FeatureCollection(feature_list)
+    feature_collection = geojson.FeatureCollection(feature_list, 
+                                                   crs={'type': 'name',  # 座標系を指定
+                                                        'properties': {'name': 'urn:ogc:def:crs:EPSG::4612'}
+                                                        })
     # geojsonファイルに書き出し
     w.write(json.dumps(feature_collection, indent=2))
 
@@ -613,7 +622,7 @@ with open(outpath, 'w', encoding='cp932') as w:
 import folium
 import geojson
 # 表示用のデータ（堤高100m以上のダム）作成
-over100m_indices = [i for i, rec in enumerate(recs_dam) if rec["W01_007"] > 100]
+over100m_indices = [i for i, rec in enumerate(recs_dam) if rec['W01_007'] > 100]
 over100m_shps = [shp for i, shp in enumerate(shps_dam) if i in over100m_indices]
 over100m_recs = [rec for i, rec in enumerate(recs_dam) if i in over100m_indices]
 
@@ -624,14 +633,17 @@ for i, (shp, rec) in enumerate(zip(over100m_shps, over100m_recs)):  # enumerate�
     point = geojson.Point((shp.points[0][0], shp.points[0][1]))
     # 属性値を作成
     attr = {'ダム名': f'{rec["W01_001"]}ダム',
-            '堤高': float(rec["W01_007"]),
-            '総貯水量': float(rec["W01_010"])
+            '堤高': float(rec['W01_007']),
+            '総貯水量': float(rec['W01_010'])
             }
     # Feature（ジオメトリと属性をまとめたもの）を作成してリストに追加
     feature = geojson.Feature(geometry=point, id=i, properties=attr)
     feature_list.append(feature)
 # FeatureのリストをFeatureCollectionに変換
-feature_collection = geojson.FeatureCollection(feature_list)
+feature_collection = geojson.FeatureCollection(feature_list, 
+                                               crs={'type': 'name',  # 座標系を指定
+                                                    'properties': {'name': 'urn:ogc:def:crs:EPSG::4612'}
+                                                    })
 
 # ベースとなる地図を作成
 folium_map = folium.Map(location=[35, 135],
@@ -647,7 +659,7 @@ folium_map
 
 # %% 表示2：ラインデータ表示（follium）
 # 表示用のデータ（上位5位の河川）作成
-river_top5_indices = [i for i, rec in enumerate(recs_river) if rec["W05_004"] in ['野洲川', '安曇川', '愛知川', '日野川', '高時川']]
+river_top5_indices = [i for i, rec in enumerate(recs_river) if rec['W05_004'] in ['野洲川', '安曇川', '愛知川', '日野川', '高時川']]
 river_top5_shps = [shp for i, shp in enumerate(shps_river) if i in river_top5_indices]
 river_top5_recs = [rec for i, rec in enumerate(recs_river) if i in river_top5_indices]
 
@@ -658,14 +670,17 @@ for i, (shp, rec) in enumerate(zip(river_top5_shps, river_top5_recs)):  # enumer
     # ジオメトリ（ポイント）を作成
     line = geojson.LineString(shp.points)
     # 属性値を作成
-    attr = {'河川名': rec["W05_004"],
-            '河川コード': rec["W05_002"]
+    attr = {'河川名': rec['W05_004'],
+            '河川コード': rec['W05_002']
             }
     # Feature（ジオメトリと属性をまとめたもの）を作成してリストに追加
     feature = geojson.Feature(geometry=line, id=i, properties=attr)
     feature_list.append(feature)
 # FeatureのリストをFeatureCollectionに変換
-feature_collection = geojson.FeatureCollection(feature_list)
+feature_collection = geojson.FeatureCollection(feature_list, 
+                                               crs={'type': 'name',  # 座標系を指定
+                                                    'properties': {'name': 'urn:ogc:def:crs:EPSG::4612'}
+                                                    })
 
 # ベースとなる地図を作成
 folium_map = folium.Map(location=[35.3, 136.1],
@@ -715,15 +730,18 @@ for i, (shp, rec, area) in enumerate(zip(lake_over50km2_shps, lake_over50km2_rec
     # ジオメトリ（ポイント）を作成
     poly = geojson.Polygon(points_hole)
     # 属性値を作成
-    attr = {'湖沼名': rec["W09_001"],
-            '最大水深': float(rec["W09_003"]),
+    attr = {'湖沼名': rec['W09_001'],
+            '最大水深': float(rec['W09_003']),
             '面積': area
             }
     # Feature（ジオメトリと属性をまとめたもの）を作成してリストに追加
     feature = geojson.Feature(geometry=poly, id=i, properties=attr)
     feature_list.append(feature)
 # FeatureのリストをFeatureCollectionに変換
-feature_collection = geojson.FeatureCollection(feature_list)
+feature_collection = geojson.FeatureCollection(feature_list, 
+                                               crs={'type': 'name',  # 座標系を指定
+                                                    'properties': {'name': 'urn:ogc:def:crs:EPSG::4612'}
+                                                    })
 
 # ベースとなる地図を作成
 folium_map = folium.Map(location=[43, 143],  # 初期表示位置
