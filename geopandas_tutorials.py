@@ -1,5 +1,6 @@
 # %% 読込1：Shapefileの読込
 import geopandas as gpd
+from shapely import geometry
 from shapely.geometry import Point
 import pyproj
 import pandas as pd
@@ -213,7 +214,7 @@ for i, row in gdf_lake.iterrows():
     center = list(row['geometry'].centroid.coords)[0]
     print(f'{row["W09_001"]}  重心={center}')
 
-# %% 処理8: ポリゴンの重心測定（UTM座標に変換）
+# %% 処理8: ポリゴンの重心測定（UTM座標に変換して算出）
 # 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
 gdf_lake_utm = gdf_lake.copy()
 gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
@@ -241,4 +242,178 @@ centers = gdf_lake['geometry'].centroid
 northest_index = np.argmax([center.y for center in centers])
 print(f'重心が最も北にある湖={gdf_lake.at[northest_index, "W09_001"]}  北緯{centers.at[northest_index].y}度')
 
+# %% 処理9: ポリゴンの面積測定
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_lake_utm = gdf_lake.copy()
+gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_lake_utm = gdf_lake_utm.to_crs(epsg=3099)  # 変換後座標に変換
+
+# 湖沼データを1点ずつ走査
+for i, row in gdf_lake_utm.iterrows():
+    # 面積を算出（m2 → km2に単位変換）
+    area = row['geometry'].area/1000000
+    print(f'{row["W09_001"]}  面積={area}km2')
+
+# %% 処理9: ポリゴン面積を一括取得
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_lake_utm = gdf_lake.copy()
+gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_lake_utm = gdf_lake_utm.to_crs(epsg=3099)  # 変換後座標に変換
+# 面積を一括計算
+areas = gdf_lake_utm['geometry'].area/1000000
+# 面積最大の湖を表示
+biggest_index = np.argmax(areas)
+print(f'面積最大の湖={gdf_lake_utm.at[biggest_index, "W09_001"]}  面積={areas[biggest_index]}km2')
+
+# %% 処理10: ジオコーディング
+import geopandas.tools as gts
+# 堤高150m以上のダムに絞る
+gdf_dam_over150m = gdf_dam[gdf_dam["W01_007"] > 150]
+# ジオコーディング実行
+gdf_dam_geo = gts.geocode(gdf_dam_over150m['W01_001'].apply(lambda x: f'{x}ダム'),
+                          provider='nominatim', user_agent='test')
+# ジオコーディング結果と元のポイントを比較
+gdf_dam_geo.insert(0, 'geometry_shp', gdf_dam_over150m['geometry'])  # 元のポイントを結合
+print(gdf_dam_geo)
+# %% 処理11: 逆ジオコーディング
+import geopandas.tools as gts
+# 堤高150m以上のダムに絞る
+gdf_dam_over150m = gdf_dam[gdf_dam["W01_007"] > 150]
+# 逆ジオコーディング実行
+gdf_dam_rgeo = gts.reverse_geocode(gdf_dam_over150m['geometry'],
+                                   provider='nominatim', user_agent='test')
+gdf_dam_rgeo.insert(0, 'W01_001', gdf_dam_over150m['W01_001'])  # ダム名を結合
+print(gdf_dam_rgeo)
+
+# %% 保存1: ポイントデータ出力（Shapefile）
+# 出力用のデータ（堤高100m以上のダム）作成
+gdf_dam_over100m = gdf_dam[gdf_dam["W01_007"] > 100]
+
+# フィールドをダム名、堤高、総貯水量に絞る
+gdf_dam_over100m = gdf_dam_over100m[['W01_001', 'W01_007', 'W01_010', 'geometry']]
+# フィールド名を変更
+gdf_dam_over100m = gdf_dam_over100m.rename(columns={'W01_001': 'ダム名',
+                                                    'W01_007': '堤高',
+                                                    'W01_010': '総貯水量'})
+
+# Shapefileを出力
+outpath = './dams_over100m/dams_over100m.shp'
+gdf_dam_over100m.to_file(outpath, encoding='cp932')
+
+# %% 保存1: ポイントデータ出力（GeoJSON）
+# 出力用のデータ（堤高100m以上のダム）作成
+gdf_dam_over100m = gdf_dam[gdf_dam['W01_007'] > 100]
+
+# フィールドをダム名、堤高、総貯水量に絞る
+gdf_dam_over100m = gdf_dam_over100m[['W01_001', 'W01_007', 'W01_010', 'geometry']]
+# フィールド名を変更
+gdf_dam_over100m = gdf_dam_over100m.rename(columns={'W01_001': 'ダム名',
+                                                    'W01_007': '堤高',
+                                                    'W01_010': '総貯水量'})
+
+# Shapefileを出力
+outpath = './dams_over100m.geojson'
+gdf_dam_over100m.to_file(outpath, driver='GeoJSON', encoding='cp932')
+
+# %% 保存2: ラインデータ出力（Shapefile）
+# 出力用のデータ（上位5位の河川に絞る）作成
+gdf_river_top5 = gdf_river[gdf_river['W05_004'].isin(['野洲川', '安曇川', '愛知川', '日野川', '高時川'])]
+# フィールドを河川名、河川コードに絞る
+gdf_river_top5 = gdf_river_top5[['W05_004', 'W05_002', 'geometry']]
+# フィールド名を変更
+gdf_river_top5 = gdf_river_top5.rename(columns={'W05_004': '河川名',
+                                                    'W05_002': '河川コード'})
+
+# Shapefileを出力
+outpath = './river_top5/river_top5.shp'
+gdf_river_top5.to_file(outpath, encoding='cp932')
+
+# %% 保存2: ラインデータ出力（GeoJSON）
+# 出力用のデータ（上位5位の河川に絞る）作成
+gdf_river_top5 = gdf_river[gdf_river['W05_004'].isin(['野洲川', '安曇川', '愛知川', '日野川', '高時川'])]
+# フィールドを河川名、河川コードに絞る
+gdf_river_top5 = gdf_river_top5[['W05_004', 'W05_002', 'geometry']]
+# フィールド名を変更
+gdf_river_top5 = gdf_river_top5.rename(columns={'W05_004': '河川名',
+                                                    'W05_002': '河川コード'})
+
+# GeoJSONを出力
+outpath = './river_top5.geojson'
+gdf_river_top5.to_file(outpath, driver='GeoJSON', encoding='cp932')
+
+# %% 保存3: ポリゴンデータ出力（Shapefile）
+# 出力用のデータ（面積100km2以上の湖沼）作成
+# UTM座標変換
+gdf_lake_utm = gdf_lake.copy()
+gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_lake_utm = gdf_lake_utm.to_crs(epsg=3099)  # 変換後座標に変換
+# 面積100km2以上のデータ抽出
+gdf_lake_utm['lake_area'] = gdf_lake_utm.area / 1000000
+gdf_lake_over100km2 = gdf_lake_utm[gdf_lake_utm['lake_area'] > 100]
+# 座標を緯度経度に戻す
+gdf_lake_over100km2 = gdf_lake_over100km2.to_crs(epsg=4612)  # 変換後座標に変換
+# フィールドを湖沼名、最大水深、面積に絞る
+gdf_lake_over100km2 = gdf_lake_over100km2[['W09_001', 'W09_003', 'lake_area', 'geometry']]
+# フィールド名を変更
+gdf_lake_over100km2 = gdf_lake_over100km2.rename(columns={'W09_001': '湖沼名',
+                                                'W09_003': '最大水深',
+                                                'lake_area': '面積'})
+
+# Shapefileを出力
+outpath = './lake_over100km2/lake_over100km2.shp'
+gdf_lake_over100km2.to_file(outpath, encoding='cp932')
+
+# %% 保存3: ポリゴンデータ出力（GeoJSON）
+# 出力用のデータ（面積100km2以上の湖沼）作成
+# UTM座標変換
+gdf_lake_utm = gdf_lake.copy()
+gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_lake_utm = gdf_lake_utm.to_crs(epsg=3099)  # 変換後座標に変換
+# 面積100km2以上のデータ抽出
+gdf_lake_utm['lake_area'] = gdf_lake_utm.area / 1000000
+gdf_lake_over100km2 = gdf_lake_utm[gdf_lake_utm['lake_area'] > 100]
+# 座標を緯度経度に戻す
+gdf_lake_over100km2 = gdf_lake_over100km2.to_crs(epsg=4612)  # 変換後座標に変換
+# フィールドを湖沼名、最大水深、面積に絞る
+gdf_lake_over100km2 = gdf_lake_over100km2[['W09_001', 'W09_003', 'lake_area', 'geometry']]
+# フィールド名を変更
+gdf_lake_over100km2 = gdf_lake_over100km2.rename(columns={'W09_001': '湖沼名',
+                                                'W09_003': '最大水深',
+                                                'lake_area': '面積'})
+# GeoJSONを出力
+outpath = './lake_over100km2.geojson'
+gdf_lake_over100km2.to_file(outpath, driver='GeoJSON', encoding='cp932')
+
+# %% 表示1: ポイントデータ表示（ポイントのみプロット）
+# 表示用のデータ（堤高100m以上のダム）作成
+gdf_dam_over100m = gdf_dam[gdf_dam['W01_007'] > 100]
+# ポイントをプロット
+gdf_dam_over100m.plot(column = 'W01_007',  # 色分け対象の列
+                      cmap = 'cool'  # 色分けのカラーマップ
+                      )
+# %% 表示1: ポイントデータ表示（地図上にプロット）
+from japanmap import pref_names, get_data, pref_points
+from shapely.geometry import Polygon
+import matplotlib.pyplot as plt
+# 表示用のfigure作成
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+# 日本地図のポリゴンデータ作成しGeoDataFrameに格納
+pref_poly = [Polygon(points) for points in pref_points(get_data())]
+gdf_pref = gpd.GeoDataFrame(crs = 'epsg:4612', geometry=pref_poly)
+gdf_pref['prefecture'] = pref_names[1:]  # 県名を格納
+# 日本地図をプロット
+gdf_pref.plot(ax = ax)
+
+# 表示用のデータ（堤高100m以上のダム）作成
+gdf_dam_over100m = gdf_dam[gdf_dam['W01_007'] > 100]
+
+# ポイントをプロット
+gdf_dam_over100m.plot(ax = ax,  # 描画先のax
+                      column = 'W01_007',  # 色分け対象の列
+                      cmap = 'OrRd',  # 色分けのカラーマップ
+                      legend = True,  # 色分けのカラーバー表示
+                      legend_kwds = {'label': 'dam height',  # カラーバーにラベル設定
+                                     'shrink': 0.6},  # カラーバーが長すぎるので短く
+                      s = 6  # 点マーカーのサイズ
+                      )
 # %%
