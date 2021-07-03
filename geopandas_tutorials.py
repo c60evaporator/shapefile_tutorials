@@ -399,7 +399,7 @@ gdf_dam_over100m.plot(column = 'W01_007',  # 色分け対象の列
                       )
 
 # %% 表示1: ポイントデータ表示（地図上にプロット）
-from japanmap import pref_names, get_data, pref_points
+from japanmap import get_data, pref_points
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
 # 表示用のfigure作成
@@ -407,9 +407,10 @@ fig, ax = plt.subplots(1, 1, figsize=(8, 8))
 # 日本地図のポリゴンデータ作成しGeoDataFrameに格納
 pref_poly = [Polygon(points) for points in pref_points(get_data())]
 gdf_pref = gpd.GeoDataFrame(crs = 'epsg:4612', geometry=pref_poly)
-gdf_pref['prefecture'] = pref_names[1:]  # 県名を格納
 # 日本地図をプロット
-gdf_pref.plot(ax = ax)
+gdf_pref.plot(ax = ax,
+              color = 'gray'  # 塗りつぶし色を指定
+              )
 
 # 表示用のデータ（堤高100m以上のダム）作成
 gdf_dam_over100m = gdf_dam[gdf_dam['W01_007'] > 100]
@@ -424,4 +425,78 @@ gdf_dam_over100m.plot(ax = ax,  # 描画先のax
                       s = 6  # 点マーカーのサイズ
                       )
 
+# %% 表示2: ラインデータ表示（地図上にプロット）
+from japanmap import pref_names, get_data, pref_points
+from shapely.geometry import Polygon
+import matplotlib.pyplot as plt
+# 表示用のfigure作成
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+# 日本地図のポリゴンデータ作成しGeoDataFrameに格納
+pref_poly = [Polygon(points) for points in pref_points(get_data())]
+gdf_pref = gpd.GeoDataFrame(crs = 'epsg:4612', geometry=pref_poly)
+gdf_pref['prefecture'] = pref_names[1:]  # 県名を格納
+# 滋賀県に絞る
+gdf_pref = gdf_pref[gdf_pref['prefecture'] == '滋賀県']
+# 日本地図をプロット
+gdf_pref.plot(ax = ax,
+              color = 'gray'  # 塗りつぶし色を指定
+              )
+
+# 表示用のデータ（上位5位の河川に絞る）作成
+gdf_river_top5 = gdf_river[gdf_river['W05_004'].isin(['野洲川', '安曇川', '愛知川', '日野川', '高時川'])]
+# フィールドを河川名、河川コードに絞る
+gdf_river_top5 = gdf_river_top5[['W05_004', 'W05_002', 'geometry']]
+# フィールド名を変更
+gdf_river_top5 = gdf_river_top5.rename(columns={'W05_004': '河川名',
+                                                    'W05_002': '河川コード'})
+
+# ラインをプロット
+gdf_river_top5.plot(ax = ax,  # 描画先のax
+                    color = 'blue'
+                    )
+
+# %% 表示3: ポリゴンデータ表示（地図上にプロット）
+from japanmap import pref_names, get_data, pref_code
+from shapely.geometry import Polygon
+import matplotlib.pyplot as plt
+# 表示用のfigure作成
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+# 日本地図のポリゴンデータ作成しGeoDataFrameに格納
+pref_poly = [Polygon(points) for points in pref_points(get_data())]
+gdf_pref = gpd.GeoDataFrame(crs = 'epsg:4612', geometry=pref_poly)
+gdf_pref['prefecture'] = pref_names[1:]  # 県名を格納
+gdf_pref['pref_code'] = gdf_pref['prefecture'].apply(lambda x: pref_code(x))  # 県コードを格納
+# 県コード30以下に絞る
+gdf_pref = gdf_pref[gdf_pref['pref_code'] <= 30]
+# 日本地図をプロット
+gdf_pref.plot(ax = ax,
+              color = 'gray'  # 塗りつぶし色を指定
+              )
+
+# UTM座標変換
+gdf_lake_utm = gdf_lake.copy()
+gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_lake_utm = gdf_lake_utm.to_crs(epsg=3099)  # 変換後座標に変換
+# 面積100km2以上のデータ抽出
+gdf_lake_utm['lake_area'] = gdf_lake_utm.area / 1000000
+gdf_lake_over100km2 = gdf_lake_utm[gdf_lake_utm['lake_area'] > 100]
+# 座標を緯度経度に戻す
+gdf_lake_over100km2 = gdf_lake_over100km2.to_crs(epsg=4612)  # 変換後座標に変換
+# フィールドを湖沼名、最大水深、面積に絞る
+gdf_lake_over100km2 = gdf_lake_over100km2[['W09_001', 'W09_003', 'lake_area', 'geometry']]
+# フィールド名を変更
+gdf_lake_over100km2 = gdf_lake_over100km2.rename(columns={'W09_001': '湖沼名',
+                                                'W09_003': '最大水深',
+                                                'lake_area': '面積'})
+# 色分け用の最大水深フィールドを文字型→数値型に修正
+gdf_lake_over100km2 = gdf_lake_over100km2.astype({'最大水深': float})
+
+# ラインをプロット
+gdf_lake_over100km2.plot(ax = ax,  # 描画先のax
+                         column = '最大水深',  # 色分け対象の列
+                         cmap = 'Blues',  # 色分けのカラーマップ
+                         legend = True,  # 色分けのカラーバー表示
+                         legend_kwds = {'label': 'depth',  # カラーバーにラベル設定
+                                     'shrink': 0.6},  # カラーバーが長すぎるので短く
+                         )
 # %%
