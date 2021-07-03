@@ -1,6 +1,5 @@
 # %% 読込1：Shapefileの読込
 import geopandas as gpd
-from shapely import geometry
 from shapely.geometry import Point
 import pyproj
 import pandas as pd
@@ -28,7 +27,10 @@ gdf_farm = gpd.read_file(FARM_PATH, encoding='cp932')  # Shapefile読込
 # ポイント
 for i, row in gdf_dam.iterrows():
     print(f'ポイント位置{row["geometry"]}')  # ジオメトリ情報
-    print(f'ダム名:{row["W01_001"]}\n堤高:{row["W01_007"]}m\n総貯水量:{row["W01_010"]}千m3\n所在地:{row["W01_013"]}')  # 属性情報
+    print(f'ダム名:{row["W01_001"]}\n\
+          堤高:{row["W01_007"]}m\n\
+          総貯水量:{row["W01_010"]}千m3\n\
+          所在地:{row["W01_013"]}')  # 属性情報
 
 # ライン
 for i, row in gdf_river.iterrows():
@@ -38,7 +40,9 @@ for i, row in gdf_river.iterrows():
 # ポリゴン
 for i, row in gdf_lake.iterrows():
     print(f'ポリゴン位置{row["geometry"]}')  # ジオメトリ情報
-    print(f'湖沼名:{row["W09_001"]}\n最大水深:{row["W09_003"]}千m3\n水面標高:{row["W09_004"]}')  # 属性情報
+    print(f'湖沼名:{row["W09_001"]}\n\
+          最大水深:{row["W09_003"]}千m3\n\
+          水面標高:{row["W09_004"]}')  # 属性情報
 
 # %% 読込3：GeoJSON読込
 
@@ -131,7 +135,8 @@ gdf_dam['dist'] = gdf_dam.apply(
 
 # 都道府県庁から最も遠いダムを表示
 farthest_index = gdf_dam['dist'].idxmax(axis=1)
-print(f'{gdf_dam.at[farthest_index, "prefecture"]}庁から最も遠いダム={gdf_dam.at[farthest_index, "W01_001"]}ダム  距離={gdf_dam.at[farthest_index, "dist"]/1000}km')
+print(f'{gdf_dam.at[farthest_index, "prefecture"]}庁から最も遠いダム={gdf_dam.at[farthest_index, "W01_001"]}ダム\
+      距離={gdf_dam.at[farthest_index, "dist"]/1000}km')
 
 # %% 処理4: 最も近い点を探す
 from sklearn.neighbors import NearestNeighbors
@@ -225,7 +230,7 @@ for i, row in gdf_lake_utm.iterrows():
     # 重心を算出
     center_utm = row['geometry'].centroid
     # 緯度経度座標に戻す（pyprojを使用。TransformPointは緯度→経度の順で返すので、元の座標系に合わせ経度を先に反転させる）
-    transformer = pyproj.Transformer.from_crs("EPSG:3099", "EPSG:4612")
+    transformer = pyproj.Transformer.from_crs('EPSG:3099', 'EPSG:4612')
     center = transformer.transform(center_utm.x, center_utm.y)[1::-1]
     print(f'{row["W09_001"]}  重心={center}')
 
@@ -268,17 +273,18 @@ print(f'面積最大の湖={gdf_lake_utm.at[biggest_index, "W09_001"]}  面積={
 # %% 処理10: ジオコーディング
 import geopandas.tools as gts
 # 堤高150m以上のダムに絞る
-gdf_dam_over150m = gdf_dam[gdf_dam["W01_007"] > 150]
+gdf_dam_over150m = gdf_dam[gdf_dam['W01_007'] > 150]
 # ジオコーディング実行
 gdf_dam_geo = gts.geocode(gdf_dam_over150m['W01_001'].apply(lambda x: f'{x}ダム'),
                           provider='nominatim', user_agent='test')
 # ジオコーディング結果と元のポイントを比較
 gdf_dam_geo.insert(0, 'geometry_shp', gdf_dam_over150m['geometry'])  # 元のポイントを結合
 print(gdf_dam_geo)
+
 # %% 処理11: 逆ジオコーディング
 import geopandas.tools as gts
 # 堤高150m以上のダムに絞る
-gdf_dam_over150m = gdf_dam[gdf_dam["W01_007"] > 150]
+gdf_dam_over150m = gdf_dam[gdf_dam['W01_007'] > 150]
 # 逆ジオコーディング実行
 gdf_dam_rgeo = gts.reverse_geocode(gdf_dam_over150m['geometry'],
                                    provider='nominatim', user_agent='test')
@@ -287,7 +293,7 @@ print(gdf_dam_rgeo)
 
 # %% 保存1: ポイントデータ出力（Shapefile）
 # 出力用のデータ（堤高100m以上のダム）作成
-gdf_dam_over100m = gdf_dam[gdf_dam["W01_007"] > 100]
+gdf_dam_over100m = gdf_dam[gdf_dam['W01_007'] > 100]
 
 # フィールドをダム名、堤高、総貯水量に絞る
 gdf_dam_over100m = gdf_dam_over100m[['W01_001', 'W01_007', 'W01_010', 'geometry']]
@@ -389,8 +395,9 @@ gdf_lake_over100km2.to_file(outpath, driver='GeoJSON', encoding='cp932')
 gdf_dam_over100m = gdf_dam[gdf_dam['W01_007'] > 100]
 # ポイントをプロット
 gdf_dam_over100m.plot(column = 'W01_007',  # 色分け対象の列
-                      cmap = 'cool'  # 色分けのカラーマップ
+                      cmap = 'OrRd'  # 色分けのカラーマップ
                       )
+
 # %% 表示1: ポイントデータ表示（地図上にプロット）
 from japanmap import pref_names, get_data, pref_points
 from shapely.geometry import Polygon
@@ -416,4 +423,5 @@ gdf_dam_over100m.plot(ax = ax,  # 描画先のax
                                      'shrink': 0.6},  # カラーバーが長すぎるので短く
                       s = 6  # 点マーカーのサイズ
                       )
+
 # %%
