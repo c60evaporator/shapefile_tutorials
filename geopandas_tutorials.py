@@ -1,4 +1,5 @@
 # %% 読込1：Shapefileの読込
+# 必要ライブラリの読込（読込以外で使用するライブラリも含みます）
 import geopandas as gpd
 from shapely.geometry import Point
 import pyproj
@@ -23,6 +24,9 @@ gdf_lake = gpd.read_file(LAKE_PATH, encoding='cp932')  # Shapefile読込
 # ポリゴン（農場データ）
 gdf_farm = gpd.read_file(FARM_PATH, encoding='cp932')  # Shapefile読込
 
+# 読み込んだダムデータの中身を表示
+gdf_dam
+
 # %% 読込2：ジオメトリ情報と属性情報を1レコードずつ取得
 # ポイント
 for i, row in gdf_dam.iterrows():
@@ -45,6 +49,8 @@ for i, row in gdf_lake.iterrows():
           水面標高:{row["W09_004"]}')  # 属性情報
 
 # %% 読込3：GeoJSON読込
+dam_over100m_path = './dams_over100m.geojson'
+gdf_dam_over100m = gpd.read_file(dam_over100m_path, encoding='cp932')
 
 # %% 処理1：一括座標変換（変換前座標を取得できるとき）
 # 変換後の座標系指定（平面直角座標13系(EPSG2455) → 緯度経度(EPSG4612)）
@@ -54,8 +60,8 @@ dst_proj = 4612 # 変換後の座標系を指定
 gdf_farm_transfer = gdf_farm.to_crs(epsg=dst_proj)  # 変換式を作成
 
 for (i1, row1), (i2, row2) in zip(gdf_farm.iterrows(), gdf_farm_transfer.iterrows()):
-    print(f'変換前ポリゴン位置{row1["geometry"]}')  # 位置情報（座標変換前）
-    print(f'変換後ポリゴン位置{row2["geometry"]}')  # 位置情報（座標変換後）
+    print(f'変換前ポリゴン位置 {row1["geometry"]}')  # 位置情報（座標変換前）
+    print(f'変換後ポリゴン位置 {row2["geometry"]}')  # 位置情報（座標変換後）
 
 # %% 処理1 一括座標変換（変換前座標を取得できないとき）
 # 変換前後の座標系指定（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
@@ -92,7 +98,6 @@ print(f'距離={dist}')
 # 県庁所在地の座標を読込
 df_prefecture = pd.read_csv('./prefecture_location.csv', encoding='cp932')
 # 緯度経度の分秒を小数に変換
-
 df_prefecture['longitude'] = df_prefecture['都道府県庁 経度'].apply(lambda x: float(x.split('°')[0])
                                                                    + float(x.split('°')[1].split("'")[0]) / 60
                                                                    + float(x.split("'")[1].split('"')[0]) / 3600)
@@ -138,7 +143,7 @@ farthest_index = gdf_dam['dist'].idxmax(axis=1)
 print(f'{gdf_dam.at[farthest_index, "prefecture"]}庁から最も遠いダム={gdf_dam.at[farthest_index, "W01_001"]}ダム\
       距離={gdf_dam.at[farthest_index, "dist"]/1000}km')
 
-# %% 処理4: 最も近い点を探す
+# %% 処理4: 最も近いポイントを探す
 from sklearn.neighbors import NearestNeighbors
 # 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
 gdf_dam_utm = gdf_dam.copy()
@@ -240,12 +245,29 @@ for i, row in gdf_lake_utm.iterrows():
     dist = grs80.inv(center[0], center[1], center_not_trans.x, center_not_trans.y)[2]
     print(f'{row["W09_001"]}  座標変換なしとの差={dist}m')
 
-# %% 処理8: ポリゴン重心位置を一括取得
+# %% 処理8: ポリゴン重心位置を一括取得（緯度経度座標のまま計算）
 # 重心位置を一括計算
 centers = gdf_lake['geometry'].centroid
 # 重心が最も北にある湖を表示
 northest_index = np.argmax([center.y for center in centers])
-print(f'重心が最も北にある湖={gdf_lake.at[northest_index, "W09_001"]}  北緯{centers.at[northest_index].y}度')
+print(f'重心が最も北にある湖={gdf_lake.at[northest_index, "W09_001"]}\
+      北緯{centers.at[northest_index].y}度')
+
+# %% 処理8: ポリゴン重心位置を一括取得（UTM座標に変換して算出）
+# 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
+gdf_lake_utm = gdf_lake.copy()
+gdf_lake_utm.crs = f'epsg:{4612}'  # 変換前座標を指定
+gdf_lake_utm = gdf_lake_utm.to_crs(epsg=3099)  # 変換後座標に変換
+# 重心位置を一括計算
+gdf_lake_utm['centroid_column'] = gdf_lake_utm['geometry'].centroid
+# 重心位置をジオメトリに設定
+gdf_lake_center = gdf_lake_utm.set_geometry('centroid_column')
+# 緯度経度座標に戻す
+gdf_lake_center = gdf_lake_center.to_crs(epsg=4612)
+# 重心が最も北にある湖を表示
+northest_index = gdf_lake_center['centroid_column'].y.idxmax()
+print(f'重心が最も北にある湖={gdf_lake_center.at[northest_index, "W09_001"]}\
+      北緯{gdf_lake_center.at[northest_index, "centroid_column"].y}度')
 
 # %% 処理9: ポリゴンの面積測定
 # 座標変換（緯度経度(EPSG4612) → UTM座標53N系(EPSG3099)）
@@ -317,7 +339,7 @@ gdf_dam_over100m = gdf_dam_over100m.rename(columns={'W01_001': 'ダム名',
                                                     'W01_007': '堤高',
                                                     'W01_010': '総貯水量'})
 
-# Shapefileを出力
+# GeoJSONを出力
 outpath = './dams_over100m.geojson'
 gdf_dam_over100m.to_file(outpath, driver='GeoJSON', encoding='cp932')
 
@@ -398,7 +420,7 @@ gdf_dam_over100m.plot(column = 'W01_007',  # 色分け対象の列
                       cmap = 'OrRd'  # 色分けのカラーマップ
                       )
 
-# %% 表示1: ポイントデータ表示（地図上にプロット）
+# %% 表示1: ポイントデータ表示（日本地図上にプロット）
 from japanmap import get_data, pref_points
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
@@ -425,7 +447,7 @@ gdf_dam_over100m.plot(ax = ax,  # 描画先のax
                       s = 6  # 点マーカーのサイズ
                       )
 
-# %% 表示2: ラインデータ表示（地図上にプロット）
+# %% 表示2: ラインデータ表示（日本地図上にプロット）
 from japanmap import pref_names, get_data, pref_points
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
@@ -455,7 +477,7 @@ gdf_river_top5.plot(ax = ax,  # 描画先のax
                     color = 'blue'
                     )
 
-# %% 表示3: ポリゴンデータ表示（地図上にプロット）
+# %% 表示3: ポリゴンデータ表示（日本地図上にプロット）
 from japanmap import pref_names, get_data, pref_code
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
